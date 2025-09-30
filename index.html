@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจองรถยนต์</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- เพิ่ม SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <!-- เพิ่ม SweetAlert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --gray: #95a5a6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 10px 10px;
+            margin-bottom: 30px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-sm {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--dark);
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+        }
+
+        /* Calendar Styles */
+        .calendar-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 25px;
+        }
+
+        .calendar {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), #2980b9);
+            color: white;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 15px;
+        }
+
+        .calendar-nav button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .calendar-nav button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background-color: var(--light);
+            font-weight: 600;
+        }
+
+        .calendar-weekdays div {
+            padding: 15px;
+            text-align: center;
+            border-right: 1px solid #ddd;
+        }
+
+        .calendar-weekdays div:last-child {
+            border-right: none;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .calendar-day {
+            padding: 15px 10px;
+            min-height: 100px;
+            border-right: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .calendar-day:nth-child(7n) {
+            border-right: none;
+        }
+
+        .calendar-day:hover {
+            background-color: #f9f9f9;
+        }
+
+        .calendar-day.other-month {
+            color: #ccc;
+            background-color: #f9f9f9;
+        }
+
+        .calendar-day.has-booking {
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .calendar-day.selected {
+            background-color: rgba(46, 204, 113, 0.2);
+            border: 2px solid var(--secondary);
+        }
+
+        .calendar-day.today {
+            background-color: rgba(243, 156, 18, 0.1);
+            border: 2px solid var(--warning);
+        }
+
+        .day-number {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .booking-indicator {
+            font-size: 0.7rem;
+            color: var(--primary);
+            background: rgba(52, 152, 219, 0.2);
+            padding: 2px 5px;
+            border-radius: 3px;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .booking-summary {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+        }
+
+        .summary-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+            border-bottom: 1px solid var(--light);
+            padding-bottom: 10px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .car-list {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+        }
+
+        .car-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: #f9f9f9;
+            transition: all 0.3s ease;
+        }
+
+        .car-item:hover {
+            background: #f0f0f0;
+        }
+
+        .car-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .car-icon {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .car-info h4 {
+            margin-bottom: 5px;
+        }
+
+        .car-status {
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 15px;
+            background: var(--secondary);
+            color: white;
+            display: inline-block;
+        }
+
+        .car-status.booked {
+            background: var(--warning);
+        }
+
+        .car-status.maintenance {
+            background: var(--danger);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        /* Action Menu Styles */
+        .action-menu {
+            position: absolute;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            z-index: 100;
+            min-width: 150px;
+            display: none;
+        }
+
+        .action-menu.active {
+            display: block;
+        }
+
+        .action-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-item:hover {
+            background: #f0f0f0;
+        }
+
+        .action-item.book {
+            color: var(--primary);
+        }
+
+        .action-item.edit {
+            color: var(--warning);
+        }
+
+        .action-item.cancel {
+            color: var(--danger);
+        }
+
+        .action-item.view {
+            color: var(--secondary);
+        }
+
+        /* Login Styles */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--dark);
+            font-size: 1.8rem;
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary);
+            font-size: 3rem;
+        }
+
+        /* Loading Styles */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(52, 152, 219, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+        }
+
+        .alert-error {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        /* Status Badge */
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: rgba(243, 156, 18, 0.2);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .status-approved {
+            background: rgba(46, 204, 113, 0.2);
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+        }
+
+        .status-rejected {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        /* Booking List Styles */
+        .booking-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .booking-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #f9f9f9;
+            border-left: 4px solid var(--primary);
+        }
+
+        .booking-item.pending {
+            border-left-color: var(--warning);
+        }
+
+        .booking-item.approved {
+            border-left-color: var(--secondary);
+        }
+
+        .booking-item.rejected {
+            border-left-color: var(--danger);
+        }
+
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .booking-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .booking-details {
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .calendar-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                grid-template-columns: 1fr 1fr;
+                display: grid;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .sidebar {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .calendar-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .calendar-day {
+                min-height: 80px;
+                padding: 10px 5px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            .calendar-weekdays div {
+                padding: 10px 5px;
+                font-size: 0.9rem;
+            }
+            
+            .calendar-day {
+                min-height: 70px;
+                padding: 8px 3px;
+            }
+            
+            .day-number {
+                font-size: 0.9rem;
+            }
+            
+            .booking-indicator {
+                font-size: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">เข้าสู่ระบบ</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="login-logo">
+                    <i class="fas fa-car"></i>
+                </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label" for="email">อีเมล</label>
+                        <input type="email" id="email" class="form-control" placeholder="กรอกอีเมล" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="password">รหัสผ่าน</label>
+                        <input type="password" id="password" class="form-control" placeholder="กรอกรหัสผ่าน" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">เข้าสู่ระบบ</button>
+                    </div>
+                </form>
+                <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+                    <h4>บัญชีทดสอบ:</h4>
+                    <p><strong>ผู้ใช้ทั่วไป:</strong> user1@company.com / password1</p>
+                    <p><strong>ผู้ใช้ทั่วไป:</strong> user2@company.com / password2</p>
+                    <p><strong>ผู้ดูแลระบบ:</strong> admin@company.com / admin123</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div class="modal" id="bookingModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="bookingModalTitle">จองรถยนต์</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="bookingForm">
+                    <input type="hidden" id="bookingId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="startDate">วันที่ออก</label>
+                            <input type="date" id="startDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="endDate">วันที่เข้า</label>
+                            <input type="date" id="endDate" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="bookerName">ชื่อผู้จอง</label>
+                            <input type="text" id="bookerName" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="department">แผนก</label>
+                            <input type="text" id="department" class="form-control" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="carSelect">เลือกรถ</label>
+                        <select id="carSelect" class="form-control" required>
+                            <option value="">-- เลือกรถ --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">วัตถุประสงค์</label>
+                        <div>
+                            <input type="radio" id="purposeNormal" name="purpose" value="normal" checked>
+                            <label for="purposeNormal">ปกติ</label>
+                            <input type="radio" id="purposeLeaveWork" name="purpose" value="leaveWork" style="margin-left: 15px;">
+                            <label for="purposeLeaveWork">ฝากงาน</label>
+                            <input type="radio" id="purposeCarToWork" name="purpose" value="carToWork" style="margin-left: 15px;">
+                            <label for="purposeCarToWork">ติดรถไปติดต่องาน</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">สถานะการขับ</label>
+                        <div>
+                            <input type="radio" id="selfDrive" name="driverStatus" value="self" checked>
+                            <label for="selfDrive">ขับเอง</label>
+                            <input type="radio" id="withDriver" name="driverStatus" value="with" style="margin-left: 15px;">
+                            <label for="withDriver">พร้อมคนขับ</label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="startTime">เวลาออก</label>
+                            <input type="time" id="startTime" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="endTime">เวลาเข้า</label>
+                            <input type="time" id="endTime" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="destination">สถานที่ไปติดต่อ</label>
+                            <input type="text" id="destination" class="form-control" placeholder="กรอกสถานที่ไปติดต่อ" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="notes">อื่นๆ</label>
+                        <textarea id="notes" class="form-control" rows="3" placeholder="หมายเหตุเพิ่มเติม"></textarea>
+                    </div>
+                    <div id="adminControls" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">สถานะการอนุมัติ</label>
+                            <div>
+                                <input type="radio" id="statusPending" name="approvalStatus" value="pending">
+                                <label for="statusPending">รออนุมัติ</label>
+                                <input type="radio" id="statusApproved" name="approvalStatus" value="approved" style="margin-left: 15px;">
+                                <label for="statusApproved">อนุมัติ</label>
+                                <input type="radio" id="statusRejected" name="approvalStatus" value="rejected" style="margin-left: 15px;">
+                                <label for="statusRejected">ปฏิเสธ</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-danger" id="cancelBooking">ยกเลิก</button>
+                        <button type="submit" class="btn btn-primary" id="saveBooking">บันทึกการจอง</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Bookings Modal -->
+    <div class="modal" id="viewBookingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="viewBookingsModalTitle">การจองทั้งหมด</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="viewBookingsDate" style="margin-bottom: 20px; font-weight: bold;"></div>
+                <div class="booking-list" id="bookingsList">
+                    <!-- Bookings will be listed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Menu -->
+    <div class="action-menu" id="actionMenu">
+        <div class="action-item book" id="bookAction">
+            <i class="fas fa-calendar-plus"></i>
+            <span>จองรถ</span>
+        </div>
+        <div class="action-item view" id="viewAction">
+            <i class="fas fa-eye"></i>
+            <span>ดูการจองทั้งหมด</span>
+        </div>
+        <div class="action-item edit" id="editAction" style="display: none;">
+            <i class="fas fa-edit"></i>
+            <span>แก้ไขการจอง</span>
+        </div>
+        <div class="action-item cancel" id="cancelAction" style="display: none;">
+            <i class="fas fa-times"></i>
+            <span>ยกเลิกการจอง</span>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app">
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <i class="fas fa-car"></i>
+                        <h1>ระบบจองรถยนต์</h1>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">U</div>
+                        <span id="userName">ผู้ใช้</span>
+                        <button class="btn btn-secondary" id="logoutBtn">ออกจากระบบ</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="loading" id="loadingIndicator">
+                <div class="spinner"></div>
+                <p>กำลังโหลดข้อมูล...</p>
+            </div>
+
+            <div id="mainContent" style="display: none;">
+                <div class="alert alert-success" id="successAlert" style="display: none;">
+                    การดำเนินการสำเร็จ
+                </div>
+
+                <div class="calendar-container">
+                    <div class="calendar">
+                        <div class="calendar-header">
+                            <div class="calendar-nav">
+                                <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                                <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                            <h2 id="currentMonth">มกราคม 2023</h2>
+                            <button class="btn btn-primary" id="newBookingBtn">จองรถ</button>
+                        </div>
+                        <div class="calendar-weekdays">
+                            <div>อาทิตย์</div>
+                            <div>จันทร์</div>
+                            <div>อังคาร</div>
+                            <div>พุธ</div>
+                            <div>พฤหัสบดี</div>
+                            <div>ศุกร์</div>
+                            <div>เสาร์</div>
+                        </div>
+                        <div class="calendar-days" id="calendarDays">
+                            <!-- Calendar days will be generated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="sidebar">
+                        <div class="booking-summary card">
+                            <h3 class="summary-title">สรุปการจองวันนี้</h3>
+                            <div class="summary-item">
+                                <span>การจองทั้งหมด</span>
+                                <span id="totalBookings">0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>รถว่าง</span>
+                                <span id="availableCars">0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>รถถูกจอง</span>
+                                <span id="bookedCars">0</span>
+                            </div>
+                        </div>
+
+                        <div class="car-list card">
+                            <h3 class="summary-title">สถานะรถ</h3>
+                            <div id="carListContainer">
+                                <!-- Car list will be generated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWRIFj6NHeHkXL1bIEbb93lUzaZf8NNmI",
+            authDomain: "fir-crud-b7960.firebaseapp.com",
+            databaseURL: "https://fir-crud-b7960-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "fir-crud-b7960",
+            storageBucket: "fir-crud-b7960.firebasestorage.app",
+            messagingSenderId: "32150734884",
+            appId: "1:32150734884:web:58b01e9f4ba0d9b9a170b1",
+            measurementId: "G-K97E7L101D"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const auth = firebase.auth();
+
+        // ตัวแปรสถานะแอปพลิเคชัน
+        let currentUser = null;
+        let currentDate = new Date();
+        let selectedDate = null;
+        let selectedBooking = null;
+        let cars = [];
+        let bookings = [];
+
+        // DOM Elements
+        const loginModal = document.getElementById('loginModal');
+        const bookingModal = document.getElementById('bookingModal');
+        const viewBookingsModal = document.getElementById('viewBookingsModal');
+        const loginForm = document.getElementById('loginForm');
+        const bookingForm = document.getElementById('bookingForm');
+        const calendarDays = document.getElementById('calendarDays');
+        const currentMonthElement = document.getElementById('currentMonth');
+        const prevMonthBtn = document.getElementById('prevMonth');
+        const nextMonthBtn = document.getElementById('nextMonth');
+        const newBookingBtn = document.getElementById('newBookingBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const mainContent = document.getElementById('mainContent');
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+        const successAlert = document.getElementById('successAlert');
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const bookerNameInput = document.getElementById('bookerName');
+        const departmentInput = document.getElementById('department');
+        const carSelect = document.getElementById('carSelect');
+        const bookingIdInput = document.getElementById('bookingId');
+        const bookingModalTitle = document.getElementById('bookingModalTitle');
+        const saveBookingBtn = document.getElementById('saveBooking');
+        const adminControls = document.getElementById('adminControls');
+        const actionMenu = document.getElementById('actionMenu');
+        const bookAction = document.getElementById('bookAction');
+        const viewAction = document.getElementById('viewAction');
+        const editAction = document.getElementById('editAction');
+        const cancelAction = document.getElementById('cancelAction');
+        const carListContainer = document.getElementById('carListContainer');
+        const bookingsList = document.getElementById('bookingsList');
+        const viewBookingsDate = document.getElementById('viewBookingsDate');
+
+        // ฟังก์ชันเริ่มต้นแอปพลิเคชัน
+        function initApp() {
+            // ตรวจสอบสถานะการล็อกอิน
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    // ผู้ใช้ล็อกอินอยู่
+                    currentUser = user;
+                    showMainApp();
+                    loadCars();
+                    loadBookings();
+                } else {
+                    // ไม่มีผู้ใช้ล็อกอิน
+                    showLoginModal();
+                }
+            });
+
+            // เพิ่ม Event Listeners
+            addEventListeners();
+            
+            // โหลดปฏิทิน
+            loadCalendar();
+        }
+
+        // เพิ่ม Event Listeners
+        function addEventListeners() {
+            // ปุ่มปิด Modal
+            document.querySelectorAll('.close-modal').forEach(button => {
+                button.addEventListener('click', () => {
+                    loginModal.classList.remove('active');
+                    bookingModal.classList.remove('active');
+                    viewBookingsModal.classList.remove('active');
+                });
+            });
+
+            // ปุ่มนำทางปฏิทิน
+            prevMonthBtn.addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                loadCalendar();
+            });
+
+            nextMonthBtn.addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                loadCalendar();
+            });
+
+            // ปุ่มจองรถ
+            newBookingBtn.addEventListener('click', () => {
+                showBookingModal();
+            });
+
+            // ปุ่มออกจากระบบ
+            logoutBtn.addEventListener('click', logout);
+
+            // ฟอร์มล็อกอิน
+            loginForm.addEventListener('submit', handleLogin);
+
+            // ฟอร์มจองรถ
+            bookingForm.addEventListener('submit', handleBooking);
+
+            // ปุ่มยกเลิกการจอง
+            document.getElementById('cancelBooking').addEventListener('click', () => {
+                bookingModal.classList.remove('active');
+                resetBookingForm();
+            });
+
+            // ปุ่มเมนูการกระทำ
+            bookAction.addEventListener('click', () => {
+                actionMenu.classList.remove('active');
+                showBookingModal(selectedDate);
+            });
+
+            viewAction.addEventListener('click', () => {
+                actionMenu.classList.remove('active');
+                showViewBookingsModal(selectedDate);
+            });
+
+            editAction.addEventListener('click', () => {
+                actionMenu.classList.remove('active');
+                if (selectedBooking) {
+                    editBooking(selectedBooking);
+                }
+            });
+
+            cancelAction.addEventListener('click', () => {
+                actionMenu.classList.remove('active');
+                if (selectedBooking) {
+                    cancelBooking(selectedBooking);
+                }
+            });
+
+            // ปิดเมนูการกระทำเมื่อคลิกที่อื่น
+            document.addEventListener('click', (e) => {
+                if (!actionMenu.contains(e.target)) {
+                    actionMenu.classList.remove('active');
+                }
+            });
+        }
+
+        // แสดง Modal ล็อกอิน
+        function showLoginModal() {
+            loginModal.classList.add('active');
+        }
+
+        // แสดง Modal จองรถ
+        function showBookingModal(selectedDay = null) {
+            resetBookingForm();
+            
+            if (selectedDay) {
+                const dateStr = formatDate(selectedDay);
+                startDateInput.value = dateStr;
+                endDateInput.value = dateStr;
+            } else {
+                const today = formatDate(new Date());
+                startDateInput.value = today;
+                endDateInput.value = today;
+            }
+
+            if (currentUser) {
+                // ในระบบจริงควรดึงข้อมูลผู้ใช้จาก Firebase
+                bookerNameInput.value = currentUser.displayName || currentUser.email.split('@')[0];
+                departmentInput.value = "แผนกตัวอย่าง";
+            }
+
+            bookingModalTitle.textContent = "จองรถยนต์";
+            saveBookingBtn.textContent = "บันทึกการจอง";
+            bookingModal.classList.add('active');
+        }
+
+        // แสดง Modal ดูการจองทั้งหมด
+        function showViewBookingsModal(selectedDay) {
+            const dateStr = formatDate(selectedDay);
+            const dayBookings = bookings.filter(booking => 
+                (booking.startDate === dateStr || booking.endDate === dateStr) && 
+                booking.status !== 'rejected'
+            );
+            
+            viewBookingsDate.textContent = `วันที่: ${formatThaiDate(selectedDay)}`;
+            bookingsList.innerHTML = '';
+            
+            if (dayBookings.length === 0) {
+                bookingsList.innerHTML = '<p>ไม่มีข้อมูลการจองในวันนี้</p>';
+            } else {
+                dayBookings.forEach(booking => {
+                    const bookingItem = document.createElement('div');
+                    bookingItem.className = `booking-item ${booking.status}`;
+                    
+                    const isAdmin = currentUser.email === 'admin@company.com';
+                    const isOwner = booking.userId === currentUser.uid;
+                    const canEdit = isAdmin || (isOwner && booking.status !== 'approved');
+                    const canCancel = isAdmin || (isOwner && booking.status === 'approved');
+                    
+                    bookingItem.innerHTML = `
+                        <div class="booking-header">
+                            <div>
+                                <strong>${booking.bookerName}</strong> - ${getCarName(booking.carId)}
+                                <span class="status-badge status-${booking.status}">${getStatusText(booking.status)}</span>
+                            </div>
+                            <div class="booking-actions">
+                                ${canEdit ? `<button class="btn btn-sm btn-warning" onclick="editBooking('${booking.id}')">แก้ไข</button>` : ''}
+                                ${canCancel ? `<button class="btn btn-sm btn-danger" onclick="cancelBooking('${booking.id}')">ยกเลิก</button>` : ''}
+                            </div>
+                        </div>
+                        <div class="booking-details">
+                            <div>เวลา: ${booking.startTime} - ${booking.endTime}</div>
+                            <div>จุดหมาย: ${booking.destination}</div>
+                            <div>วัตถุประสงค์: ${getPurposeText(booking.purpose)}</div>
+                            ${booking.notes ? `<div>หมายเหตุ: ${booking.notes}</div>` : ''}
+                        </div>
+                    `;
+                    bookingsList.appendChild(bookingItem);
+                });
+            }
+            
+            viewBookingsModal.classList.add('active');
+        }
+
+        // จัดการการล็อกอิน
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // ล็อกอินด้วย Firebase Auth
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // ล็อกอินสำเร็จ
+                    currentUser = userCredential.user;
+                    
+                    // ดึงข้อมูลผู้ใช้จาก Realtime Database
+                    return database.ref('users/' + currentUser.uid).once('value');
+                })
+                .then((snapshot) => {
+                    const userData = snapshot.val();
+                    if (userData) {
+                        currentUser.role = userData.role;
+                        currentUser.department = userData.department;
+                        currentUser.displayName = userData.displayName;
+                    }
+                    
+                    loginModal.classList.remove('active');
+                    showMainApp();
+                    showSweetAlert('เข้าสู่ระบบสำเร็จ', 'success');
+                })
+                .catch((error) => {
+                    // ล็อกอินไม่สำเร็จ
+                    let errorMessage = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+                    if (error.code === 'auth/user-not-found') {
+                        errorMessage = 'ไม่พบบัญชีผู้ใช้';
+                    } else if (error.code === 'auth/wrong-password') {
+                        errorMessage = 'รหัสผ่านไม่ถูกต้อง';
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = 'รูปแบบอีเมลไม่ถูกต้อง';
+                    }
+                    showSweetAlert(errorMessage, 'error');
+                });
+        }
+
+        // จัดการการจองรถ
+        function handleBooking(e) {
+            e.preventDefault();
+            
+            const carId = carSelect.value;
+            const startDate = startDateInput.value;
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+            const bookingId = bookingIdInput.value;
+            const purpose = document.querySelector('input[name="purpose"]:checked').value;
+            
+            // ตรวจสอบความซ้ำซ้อนของการจอง (ยกเว้นกรณีฝากงานและติดรถไปติดต่องาน)
+            if (purpose === 'normal') {
+                const isConflict = bookings.some(booking => 
+                    booking.id !== bookingId &&
+                    booking.carId === carId && 
+                    booking.startDate === startDate && 
+                    booking.status !== 'rejected' &&
+                    ((startTime >= booking.startTime && startTime < booking.endTime) ||
+                     (endTime > booking.startTime && endTime <= booking.endTime) ||
+                     (startTime <= booking.startTime && endTime >= booking.endTime))
+                );
+                
+                if (isConflict) {
+                    showSweetAlert('รถคันนี้มีการจองในช่วงเวลานี้แล้ว', 'error');
+                    return;
+                }
+            }
+            
+            // สร้างหรืออัพเดตการจอง
+            const bookingData = {
+                startDate: startDate,
+                endDate: endDateInput.value,
+                bookerName: bookerNameInput.value,
+                department: departmentInput.value,
+                carId: carId,
+                driverStatus: document.querySelector('input[name="driverStatus"]:checked').value,
+                startTime: startTime,
+                endTime: endTime,
+                destination: document.getElementById('destination').value,
+                purpose: purpose,
+                notes: document.getElementById('notes').value,
+                userId: currentUser.uid,
+                status: currentUser.email === 'admin@company.com' ? 'approved' : 'pending'
+            };
+            
+            // ถ้ามีการเลือกสถานะโดย admin
+            if (currentUser.email === 'admin@company.com') {
+                const status = document.querySelector('input[name="approvalStatus"]:checked').value;
+                bookingData.status = status;
+            }
+            
+            if (bookingId) {
+                // อัพเดตการจองที่มีอยู่
+                updateBooking(bookingId, bookingData);
+            } else {
+                // สร้างการจองใหม่
+                createBooking(bookingData);
+            }
+        }
+
+        // สร้างการจองใหม่
+        function createBooking(bookingData) {
+            const newBookingRef = database.ref('bookings').push();
+            bookingData.id = newBookingRef.key;
+            bookingData.createdAt = firebase.database.ServerValue.TIMESTAMP;
+            
+            newBookingRef.set(bookingData)
+                .then(() => {
+                    bookingModal.classList.remove('active');
+                    showSweetAlert('การจองรถสำเร็จ! รอการอนุมัติจากผู้ดูแลระบบ', 'success');
+                    resetBookingForm();
+                })
+                .catch((error) => {
+                    showSweetAlert('เกิดข้อผิดพลาดในการจอง: ' + error.message, 'error');
+                });
+        }
+
+        // อัพเดตการจอง
+        function updateBooking(bookingId, bookingData) {
+            database.ref('bookings/' + bookingId).update(bookingData)
+                .then(() => {
+                    bookingModal.classList.remove('active');
+                    showSweetAlert('อัพเดตการจองสำเร็จ', 'success');
+                    resetBookingForm();
+                })
+                .catch((error) => {
+                    showSweetAlert('เกิดข้อผิดพลาดในการอัพเดต: ' + error.message, 'error');
+                });
+        }
+
+        // ยกเลิกการจอง
+        function cancelBooking(bookingId) {
+            // หาข้อมูลการจอง
+            const booking = bookings.find(b => b.id === bookingId);
+            
+            if (!booking) return;
+            
+            // ตรวจสอบสิทธิ์การยกเลิก
+            const isAdmin = currentUser.email === 'admin@company.com';
+            const isOwner = booking.userId === currentUser.uid;
+            
+            if (!isAdmin && !isOwner) {
+                showSweetAlert('คุณไม่มีสิทธิ์ยกเลิกการจองนี้', 'error');
+                return;
+            }
+            
+            if (!isAdmin && booking.status !== 'approved') {
+                showSweetAlert('สามารถยกเลิกได้เฉพาะการจองที่อนุมัติแล้วเท่านั้น', 'error');
+                return;
+            }
+            
+            Swal.fire({
+                title: 'คุณแน่ใจหรือไม่?',
+                text: "คุณต้องการยกเลิกการจองนี้หรือไม่?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'ใช่, ยกเลิก!',
+                cancelButtonText: 'ไม่, ยกเลิกการกระทำ'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    database.ref('bookings/' + bookingId).remove()
+                        .then(() => {
+                            showSweetAlert('ยกเลิกการจองสำเร็จ', 'success');
+                        })
+                        .catch((error) => {
+                            showSweetAlert('เกิดข้อผิดพลาดในการยกเลิก: ' + error.message, 'error');
+                        });
+                }
+            });
+        }
+
+        // แก้ไขการจอง
+        function editBooking(bookingId) {
+            const booking = bookings.find(b => b.id === bookingId);
+            
+            if (!booking) return;
+            
+            // ตรวจสอบสิทธิ์การแก้ไข
+            const isAdmin = currentUser.email === 'admin@company.com';
+            const isOwner = booking.userId === currentUser.uid;
+            
+            if (!isAdmin && !isOwner) {
+                showSweetAlert('คุณไม่มีสิทธิ์แก้ไขการจองนี้', 'error');
+                return;
+            }
+            
+            if (!isAdmin && booking.status === 'approved') {
+                showSweetAlert('ไม่สามารถแก้ไขการจองที่อนุมัติแล้วได้', 'error');
+                return;
+            }
+            
+            resetBookingForm();
+            
+            // กรอกข้อมูลในฟอร์ม
+            bookingIdInput.value = booking.id;
+            startDateInput.value = booking.startDate;
+            endDateInput.value = booking.endDate;
+            bookerNameInput.value = booking.bookerName;
+            departmentInput.value = booking.department;
+            carSelect.value = booking.carId;
+            document.querySelector(`input[name="driverStatus"][value="${booking.driverStatus}"]`).checked = true;
+            document.getElementById('startTime').value = booking.startTime;
+            document.getElementById('endTime').value = booking.endTime;
+            document.getElementById('destination').value = booking.destination;
+            document.querySelector(`input[name="purpose"][value="${booking.purpose || 'normal'}"]`).checked = true;
+            document.getElementById('notes').value = booking.notes || '';
+            
+            // ถ้าเป็น admin แสดงตัวเลือกสถานะ
+            if (currentUser.email === 'admin@company.com') {
+                adminControls.style.display = 'block';
+                document.querySelector(`input[name="approvalStatus"][value="${booking.status}"]`).checked = true;
+            }
+            
+            bookingModalTitle.textContent = "แก้ไขการจองรถ";
+            saveBookingBtn.textContent = "อัพเดตการจอง";
+            bookingModal.classList.add('active');
+            viewBookingsModal.classList.remove('active');
+        }
+
+        // โหลดข้อมูลรถ
+        function loadCars() {
+            database.ref('cars').on('value', (snapshot) => {
+                const carsData = snapshot.val();
+                if (carsData) {
+                    cars = Object.keys(carsData).map(key => ({
+                        id: key,
+                        ...carsData[key]
+                    }));
+                    updateCarSelect();
+                    updateCarList();
+                } else {
+                    // ถ้ายังไม่มีข้อมูลรถใน Firebase ให้สร้างข้อมูลเริ่มต้น
+                    initializeCars();
+                }
+            });
+        }
+
+        // โหลดข้อมูลการจอง
+        function loadBookings() {
+            database.ref('bookings').on('value', (snapshot) => {
+                const bookingsData = snapshot.val();
+                if (bookingsData) {
+                    bookings = Object.keys(bookingsData).map(key => ({
+                        id: key,
+                        ...bookingsData[key]
+                    }));
+                    loadCalendar();
+                    updateSummary();
+                }
+            });
+        }
+
+        // เริ่มต้นข้อมูลรถ
+        function initializeCars() {
+            const defaultCars = [
+                { id: 'car1', name: 'Toyota Camry', type: 'sedan', status: 'available' },
+                { id: 'car2', name: 'Honda Civic', type: 'sedan', status: 'available' },
+                { id: 'car3', name: 'Mazda CX-5', type: 'suv', status: 'maintenance' },
+                { id: 'car4', name: 'Ford Ranger', type: 'truck', status: 'available' }
+            ];
+            
+            defaultCars.forEach(car => {
+                database.ref('cars/' + car.id).set({
+                    name: car.name,
+                    type: car.type,
+                    status: car.status
+                });
+            });
+        }
+
+        // ออกจากระบบ
+        function logout() {
+            Swal.fire({
+                title: 'ออกจากระบบ?',
+                text: "คุณต้องการออกจากระบบหรือไม่?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'ใช่, ออกจากระบบ!',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    auth.signOut()
+                        .then(() => {
+                            currentUser = null;
+                            showLoginModal();
+                            mainContent.style.display = 'none';
+                        })
+                        .catch((error) => {
+                            showSweetAlert('เกิดข้อผิดพลาดในการออกจากระบบ: ' + error.message, 'error');
+                        });
+                }
+            });
+        }
+
+        // แสดงแอปพลิเคชันหลัก
+        function showMainApp() {
+            loadingIndicator.style.display = 'none';
+            mainContent.style.display = 'block';
+            
+            if (currentUser) {
+                userAvatar.textContent = currentUser.displayName ? currentUser.displayName.charAt(0) : currentUser.email.charAt(0);
+                userName.textContent = currentUser.displayName || currentUser.email.split('@')[0];
+                
+                // ถ้าเป็น admin ให้แสดงการควบคุม
+                if (currentUser.email === 'admin@company.com') {
+                    adminControls.style.display = 'block';
+                }
+            }
+        }
+
+        // โหลดปฏิทิน
+        function loadCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            // อัพเดตเดือนและปีที่แสดง
+            const monthNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+                "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            currentMonthElement.textContent = `${monthNames[month]} ${year + 543}`;
+            
+            // วันแรกของเดือน
+            const firstDay = new Date(year, month, 1);
+            // วันสุดท้ายของเดือน
+            const lastDay = new Date(year, month + 1, 0);
+            // จำนวนวันในเดือน
+            const daysInMonth = lastDay.getDate();
+            // วันในสัปดาห์ของวันแรก (0 = อาทิตย์, 1 = จันทร์, ...)
+            const firstDayOfWeek = firstDay.getDay();
+            
+            // วันปัจจุบัน
+            const today = new Date();
+            const isCurrentMonth = today.getMonth() === month && today.getFullYear() === year;
+            
+            // เคลียร์ปฏิทิน
+            calendarDays.innerHTML = '';
+            
+            // เพิ่มวันจากเดือนก่อนหน้า
+            const prevMonthLastDay = new Date(year, month, 0).getDate();
+            for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day other-month';
+                dayElement.innerHTML = `
+                    <div class="day-number">${prevMonthLastDay - i}</div>
+                `;
+                calendarDays.appendChild(dayElement);
+            }
+            
+            // เพิ่มวันของเดือนปัจจุบัน
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayElement = document.createElement('div');
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                dayElement.dataset.date = dateStr;
+                
+                // ตรวจสอบว่าวันนี้เป็นวันปัจจุบันหรือไม่
+                if (isCurrentMonth && i === today.getDate()) {
+                    dayElement.className = 'calendar-day today';
+                } else {
+                    dayElement.className = 'calendar-day';
+                }
+                
+                // ตรวจสอบว่ามีการจองในวันนี้หรือไม่
+                const dayBookings = bookings.filter(booking => 
+                    (booking.startDate === dateStr || booking.endDate === dateStr) && 
+                    booking.status !== 'rejected'
+                );
+                
+                let bookingIndicator = '';
+                if (dayBookings.length > 0) {
+                    dayElement.classList.add('has-booking');
+                    bookingIndicator = `<div class="booking-indicator">${dayBookings.length} การจอง</div>`;
+                }
+                
+                dayElement.innerHTML = `
+                    <div class="day-number">${i}</div>
+                    ${bookingIndicator}
+                `;
+                
+                // เพิ่ม Event Listener สำหรับการคลิกวันที่
+                dayElement.addEventListener('click', (e) => {
+                    if (currentUser) {
+                        // เลือกวันที่
+                        document.querySelectorAll('.calendar-day').forEach(day => {
+                            day.classList.remove('selected');
+                        });
+                        dayElement.classList.add('selected');
+                        selectedDate = new Date(year, month, i);
+                        
+                        // ตรวจสอบว่าผู้ใช้มีการจองในวันนี้หรือไม่
+                        const userBookings = dayBookings.filter(booking => 
+                            booking.userId === currentUser.uid || currentUser.email === 'admin@company.com'
+                        );
+                        
+                        // ตั้งค่าตำแหน่งเมนูการกระทำ
+                        const rect = dayElement.getBoundingClientRect();
+                        actionMenu.style.top = `${rect.bottom + window.scrollY}px`;
+                        actionMenu.style.left = `${rect.left + window.scrollX}px`;
+                        
+                        // แสดงหรือซ่อนตัวเลือกในเมนู
+                        bookAction.style.display = 'block';
+                        viewAction.style.display = 'block';
+                        editAction.style.display = userBookings.length > 0 ? 'block' : 'none';
+                        cancelAction.style.display = userBookings.length > 0 ? 'block' : 'none';
+                        
+                        // เก็บข้อมูลการจองที่เลือก (ถ้ามี)
+                        selectedBooking = userBookings.length > 0 ? userBookings[0] : null;
+                        
+                        // แสดงเมนูการกระทำ
+                        actionMenu.classList.add('active');
+                    } else {
+                        showLoginModal();
+                    }
+                    
+                    e.stopPropagation();
+                });
+                
+                calendarDays.appendChild(dayElement);
+            }
+            
+            // เพิ่มวันจากเดือนถัดไป
+            const totalCells = 42; // 6 สัปดาห์ * 7 วัน
+            const remainingCells = totalCells - (firstDayOfWeek + daysInMonth);
+            for (let i = 1; i <= remainingCells; i++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day other-month';
+                dayElement.innerHTML = `
+                    <div class="day-number">${i}</div>
+                `;
+                calendarDays.appendChild(dayElement);
+            }
+        }
+
+        // อัพเดตข้อมูลสรุป
+        function updateSummary() {
+            const today = formatDate(new Date());
+            const todayBookings = bookings.filter(booking => 
+                (booking.startDate === today || booking.endDate === today) && 
+                booking.status !== 'rejected'
+            );
+            
+            const availableCarsCount = cars.filter(car => car.status === 'available').length;
+            
+            document.getElementById('totalBookings').textContent = todayBookings.length;
+            document.getElementById('bookedCars').textContent = todayBookings.length;
+            document.getElementById('availableCars').textContent = availableCarsCount - todayBookings.length;
+        }
+
+        // อัพเดต dropdown รถ
+        function updateCarSelect() {
+            carSelect.innerHTML = '<option value="">-- เลือกรถ --</option>';
+            cars.forEach(car => {
+                if (car.status === 'available') {
+                    const option = document.createElement('option');
+                    option.value = car.id;
+                    option.textContent = car.name;
+                    carSelect.appendChild(option);
+                }
+            });
+        }
+
+        // อัพเดตรายการรถ
+        function updateCarList() {
+            carListContainer.innerHTML = '';
+            const today = formatDate(new Date());
+            const todayBookings = bookings.filter(booking => 
+                (booking.startDate === today || booking.endDate === today) && 
+                booking.status !== 'rejected'
+            );
+            
+            cars.forEach(car => {
+                const isBooked = todayBookings.some(booking => booking.carId === car.id);
+                const statusClass = car.status === 'maintenance' ? 'maintenance' : (isBooked ? 'booked' : '');
+                const statusText = car.status === 'maintenance' ? 'กำลังซ่อมแซม' : (isBooked ? 'ถูกจอง' : 'ว่าง');
+                
+                const carItem = document.createElement('div');
+                carItem.className = 'car-item';
+                carItem.innerHTML = `
+                    <div class="car-icon">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <div class="car-info">
+                        <h4>${car.name}</h4>
+                        <span class="car-status ${statusClass}">${statusText}</span>
+                    </div>
+                `;
+                carListContainer.appendChild(carItem);
+            });
+        }
+
+        // รีเซ็ตฟอร์มจองรถ
+        function resetBookingForm() {
+            bookingForm.reset();
+            bookingIdInput.value = '';
+            adminControls.style.display = 'none';
+            document.getElementById('selfDrive').checked = true;
+            document.getElementById('purposeNormal').checked = true;
+            
+            // ตั้งค่าวันที่เริ่มต้นเป็นวันนี้
+            const today = formatDate(new Date());
+            startDateInput.value = today;
+            endDateInput.value = today;
+        }
+
+        // แสดง SweetAlert
+        function showSweetAlert(message, type) {
+            Swal.fire({
+                title: type === 'success' ? 'สำเร็จ!' : 'เกิดข้อผิดพลาด!',
+                text: message,
+                icon: type,
+                confirmButtonText: 'ตกลง'
+            });
+        }
+
+        // รูปแบบวันที่เป็น YYYY-MM-DD
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // รูปแบบวันที่ไทย
+        function formatThaiDate(date) {
+            const day = date.getDate();
+            const month = date.getMonth() + 1;
+            const year = date.getFullYear() + 543;
+            return `${day}/${month}/${year}`;
+        }
+
+        // รับชื่อรถจาก ID
+        function getCarName(carId) {
+            const car = cars.find(c => c.id === carId);
+            return car ? car.name : 'ไม่พบข้อมูลรถ';
+        }
+
+        // รับข้อความสถานะ
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': 'รออนุมัติ',
+                'approved': 'อนุมัติ',
+                'rejected': 'ปฏิเสธ'
+            };
+            return statusMap[status] || status;
+        }
+
+        // รับข้อความวัตถุประสงค์
+        function getPurposeText(purpose) {
+            const purposeMap = {
+                'normal': 'ปกติ',
+                'leaveWork': 'ฝากงาน',
+                'carToWork': 'ติดรถไปติดต่องาน'
+            };
+            return purposeMap[purpose] || purpose;
+        }
+
+        // เริ่มต้นแอปพลิเคชันเมื่อโหลดหน้าเว็บเสร็จ
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
