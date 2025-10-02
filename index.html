@@ -1321,252 +1321,303 @@
     </nav>
 
     <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCWRIFj6NHeHkXL1bIEbb93lUzaZf8NNmI",
-            authDomain: "fir-crud-b7960.firebaseapp.com",
-            databaseURL: "https://fir-crud-b7960-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "fir-crud-b7960",
-            storageBucket: "fir-crud-b7960.firebasestorage.app",
-            messagingSenderId: "32150734884",
-            appId: "1:32150734884:web:58b01e9f4ba0d9b9a170b1",
-            measurementId: "G-K97E7L101D"
-        };
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyCWRIFj6NHeHkXL1bIEbb93lUzaZf8NNmI",
+        authDomain: "fir-crud-b7960.firebaseapp.com",
+        databaseURL: "https://fir-crud-b7960-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "fir-crud-b7960",
+        storageBucket: "fir-crud-b7960.firebasestorage.app",
+        messagingSenderId: "32150734884",
+        appId: "1:32150734884:web:58b01e9f4ba0d9b9a170b1",
+        measurementId: "G-K97E7L101D"
+    };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const auth = firebase.auth();
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const auth = firebase.auth();
 
-        // ตัวแปรสถานะแอปพลิเคชัน
-        let currentUser = null;
-        let currentDate = new Date();
-        let selectedDate = null;
-        let selectedBooking = null;
-        let cars = [];
-        let users = [];
-        let bookings = [];
+    // ตัวแปรสถานะแอปพลิเคชัน
+    let currentUser = null;
+    let currentDate = new Date();
+    let selectedDate = null;
+    let selectedBooking = null;
+    let cars = [];
+    let users = [];
+    let bookings = [];
 
-        // DOM Elements
-        const loginModal = document.getElementById('loginModal');
-        const bookingModal = document.getElementById('bookingModal');
-        const viewBookingsModal = document.getElementById('viewBookingsModal');
-        const myBookingsModal = document.getElementById('myBookingsModal');
-        const adminModal = document.getElementById('adminModal');
-        const carFormModal = document.getElementById('carFormModal');
-        const userFormModal = document.getElementById('userFormModal');
-        const loginForm = document.getElementById('loginForm');
-        const bookingForm = document.getElementById('bookingForm');
-        const carForm = document.getElementById('carForm');
-        const userForm = document.getElementById('userForm');
-        const calendarDays = document.getElementById('calendarDays');
-        const currentMonthElement = document.getElementById('currentMonth');
-        const prevMonthBtn = document.getElementById('prevMonth');
-        const nextMonthBtn = document.getElementById('nextMonth');
-        const newBookingBtn = document.getElementById('newBookingBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const adminBtn = document.getElementById('adminBtn');
-        const loadingIndicator = document.getElementById('loadingIndicator');
-        const mainContent = document.getElementById('mainContent');
-        const userAvatar = document.getElementById('userAvatar');
-        const userName = document.getElementById('userName');
-        const successAlert = document.getElementById('successAlert');
-        const startDateInput = document.getElementById('startDate');
-        const endDateInput = document.getElementById('endDate');
-        const bookerNameInput = document.getElementById('bookerName');
-        const departmentInput = document.getElementById('department');
-        const carSelect = document.getElementById('carSelect');
-        const carSelectGroup = document.getElementById('carSelectGroup');
-        const bookingIdInput = document.getElementById('bookingId');
-        const bookingModalTitle = document.getElementById('bookingModalTitle');
-        const saveBookingBtn = document.getElementById('saveBooking');
-        const adminControls = document.getElementById('adminControls');
-        const actionMenu = document.getElementById('actionMenu');
-        const bookAction = document.getElementById('bookAction');
-        const viewAction = document.getElementById('viewAction');
-        const bookingsList = document.getElementById('bookingsList');
-        const viewBookingsDate = document.getElementById('viewBookingsDate');
-        const myTodayBookings = document.getElementById('myTodayBookings');
-        const viewAllMyBookingsBtn = document.getElementById('viewAllMyBookingsBtn');
-        const myBookingsList = document.getElementById('myBookingsList');
-        const carsList = document.getElementById('carsList');
-        const usersList = document.getElementById('usersList');
+    // DOM Elements
+    const loginModal = document.getElementById('loginModal');
+    const bookingModal = document.getElementById('bookingModal');
+    const viewBookingsModal = document.getElementById('viewBookingsModal');
+    const myBookingsModal = document.getElementById('myBookingsModal');
+    const adminModal = document.getElementById('adminModal');
+    const carFormModal = document.getElementById('carFormModal');
+    const userFormModal = document.getElementById('userFormModal');
+    const loginForm = document.getElementById('loginForm');
+    const bookingForm = document.getElementById('bookingForm');
+    const carForm = document.getElementById('carForm');
+    const userForm = document.getElementById('userForm');
+    const calendarDays = document.getElementById('calendarDays');
+    const currentMonthElement = document.getElementById('currentMonth');
+    const prevMonthBtn = document.getElementById('prevMonth');
+    const nextMonthBtn = document.getElementById('nextMonth');
+    const newBookingBtn = document.getElementById('newBookingBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const adminBtn = document.getElementById('adminBtn');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const mainContent = document.getElementById('mainContent');
+    const userAvatar = document.getElementById('userAvatar');
+    const userName = document.getElementById('userName');
+    const successAlert = document.getElementById('successAlert');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    const bookerNameInput = document.getElementById('bookerName');
+    const departmentInput = document.getElementById('department');
+    const carSelect = document.getElementById('carSelect');
+    const carSelectGroup = document.getElementById('carSelectGroup');
+    const bookingIdInput = document.getElementById('bookingId');
+    const bookingModalTitle = document.getElementById('bookingModalTitle');
+    const saveBookingBtn = document.getElementById('saveBooking');
+    const adminControls = document.getElementById('adminControls');
+    const actionMenu = document.getElementById('actionMenu');
+    const bookAction = document.getElementById('bookAction');
+    const viewAction = document.getElementById('viewAction');
+    const bookingsList = document.getElementById('bookingsList');
+    const viewBookingsDate = document.getElementById('viewBookingsDate');
+    const myTodayBookings = document.getElementById('myTodayBookings');
+    const viewAllMyBookingsBtn = document.getElementById('viewAllMyBookingsBtn');
+    const myBookingsList = document.getElementById('myBookingsList');
+    const carsList = document.getElementById('carsList');
+    const usersList = document.getElementById('usersList');
 
-        // Bottom Nav Elements
-        const homeNav = document.getElementById('homeNav');
-        const bookingsNav = document.getElementById('bookingsNav');
-        const logoutNav = document.getElementById('logoutNav');
+    // Bottom Nav Elements
+    const homeNav = document.getElementById('homeNav');
+    const bookingsNav = document.getElementById('bookingsNav');
+    const logoutNav = document.getElementById('logoutNav');
 
-        function initApp() {
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    currentUser = user;
-                    database.ref('users/' + currentUser.uid).once('value')
-                        .then((snapshot) => {
-                            const userData = snapshot.val();
-                            if (userData) {
-                                currentUser.displayName = userData.displayName || currentUser.email.split('@')[0];
-                                currentUser.department = userData.department || 'ไม่ระบุ';
-                                currentUser.role = userData.role || 'user';
-                            } else {
-                                currentUser.department = 'ไม่ระบุ';
-                                currentUser.role = 'user';
-                            }
-                            showMainApp();
-                            loadCars();
-                            loadBookings();
-                            if (currentUser.role === 'admin') {
-                                loadUsers();
-                            }
-                        })
-                        .catch((error) => {
-                            console.error('Error fetching user data:', error);
-                            showSweetAlert('ไม่สามารถดึงข้อมูลผู้ใช้ได้: ' + error.message, 'error');
-                        });
-                } else {
-                    showLoginModal();
-                }
-            });
-
-            // Set min date for booking inputs
-            const today = formatDate(new Date());
-            startDateInput.setAttribute('min', today);
-            endDateInput.setAttribute('min', today);
-
-            addEventListeners();
-            loadCalendar();
-        }
-
-        function addEventListeners() {
-            document.querySelectorAll('.close-modal').forEach(button => {
-                button.addEventListener('click', () => {
-                    loginModal.classList.remove('active');
-                    bookingModal.classList.remove('active');
-                    viewBookingsModal.classList.remove('active');
-                    myBookingsModal.classList.remove('active');
-                    adminModal.classList.remove('active');
-                    carFormModal.classList.remove('active');
-                    userFormModal.classList.remove('active');
-                });
-            });
-
-            // Tab navigation for admin
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    btn.classList.add('active');
-                    document.getElementById(btn.dataset.tab + 'Tab').classList.add('active');
-                });
-            });
-
-            prevMonthBtn.addEventListener('click', () => {
-                currentDate.setMonth(currentDate.getMonth() - 1);
-                loadCalendar();
-            });
-
-            nextMonthBtn.addEventListener('click', () => {
-                currentDate.setMonth(currentDate.getMonth() + 1);
-                loadCalendar();
-            });
-
-            newBookingBtn.addEventListener('click', () => {
-                showBookingModal();
-            });
-
-            adminBtn.addEventListener('click', () => {
-                if (currentUser.role === 'admin') {
-                    adminModal.classList.add('active');
-                    loadCarsList();
-                    if (users.length === 0) {
-                        database.ref('users').once('value').then((snapshot) => {
-                            const data = snapshot.val();
-                            if (data) {
-                                users = Object.keys(data).map(key => ({
-                                    uid: key,
-                                    ...data[key]
-                                }));
-                            }
-                            loadUsersList();
-                        });
-                    } else {
-                        loadUsersList();
-                    }
-                } else {
-                    showSweetAlert('คุณไม่มีสิทธิ์เข้าถึง', 'error');
-                }
-            });
-
-            logoutBtn.addEventListener('click', logout);
-            loginForm.addEventListener('submit', handleLogin);
-            bookingForm.addEventListener('submit', handleBooking);
-            carForm.addEventListener('submit', handleCarForm);
-            userForm.addEventListener('submit', handleUserForm);
-            document.getElementById('cancelBooking').addEventListener('click', () => {
-                bookingModal.classList.remove('active');
-                resetBookingForm();
-            });
-            document.getElementById('cancelCarForm').addEventListener('click', () => {
-                carFormModal.classList.remove('active');
-                resetCarForm();
-            });
-            document.getElementById('cancelUserForm').addEventListener('click', () => {
-                userFormModal.classList.remove('active');
-                resetUserForm();
-            });
-            document.getElementById('addCarBtn').addEventListener('click', () => showCarFormModal());
-            document.getElementById('addUserBtn').addEventListener('click', () => showUserFormModal());
-            viewAllMyBookingsBtn.addEventListener('click', showMyBookingsModal);
-            bookAction.addEventListener('click', () => {
-                actionMenu.classList.remove('active');
-                showBookingModal(selectedDate);
-            });
-            viewAction.addEventListener('click', () => {
-                actionMenu.classList.remove('active');
-                showViewBookingsModal(selectedDate);
-            });
-            document.querySelectorAll('input[name="purpose"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    if (this.value === 'normal') {
-                        carSelectGroup.style.display = 'block';
-                        carSelect.setAttribute('required', 'required');
-                    } else {
-                        carSelectGroup.style.display = 'none';
-                        carSelect.removeAttribute('required');
-                        carSelect.value = '';
-                    }
-                });
-            });
-            document.addEventListener('click', (e) => {
-                if (!actionMenu.contains(e.target)) {
-                    actionMenu.classList.remove('active');
-                }
-            });
-            homeNav.addEventListener('click', (e) => {
-                e.preventDefault();
-            });
-            bookingsNav.addEventListener('click', (e) => {
-                e.preventDefault();
-                showMyBookingsModal();
-            });
-            logoutNav.addEventListener('click', (e) => {
-                e.preventDefault();
-                logout();
-            });
-        }
-
-        function showLoginModal() {
-            loginModal.classList.add('active');
-        }
-
-        function showBookingModal(selectedDay = null) {
-            if (cars.length === 0) {
-                showSweetAlert('กำลังโหลดข้อมูลรถยนต์ กรุณารอสักครู่', 'warning');
-                return;
+    function initApp() {
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                database.ref('users/' + currentUser.uid).once('value')
+                    .then((snapshot) => {
+                        const userData = snapshot.val();
+                        if (userData) {
+                            // แก้ไขตรงนี้ - ใช้ displayName จากฐานข้อมูล
+                            currentUser.displayName = userData.displayName || currentUser.email.split('@')[0];
+                            currentUser.department = userData.department || 'ไม่ระบุ';
+                            currentUser.role = userData.role || 'user';
+                        } else {
+                            // ถ้าไม่มีข้อมูลผู้ใช้ในฐานข้อมูล ให้สร้างข้อมูลใหม่
+                            const username = currentUser.email.split('@')[0];
+                            const displayName = username.charAt(0).toUpperCase() + username.slice(1) + ' User';
+                            
+                            database.ref('users/' + currentUser.uid).set({
+                                displayName: displayName,
+                                department: 'ไม่ระบุ',
+                                role: 'user',
+                                email: currentUser.email,
+                                createdAt: firebase.database.ServerValue.TIMESTAMP
+                            });
+                            
+                            currentUser.displayName = displayName;
+                            currentUser.department = 'ไม่ระบุ';
+                            currentUser.role = 'user';
+                        }
+                        showMainApp();
+                        loadCars();
+                        loadBookings();
+                        if (currentUser.role === 'admin') {
+                            loadUsers();
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching user data:', error);
+                        showSweetAlert('ไม่สามารถดึงข้อมูลผู้ใช้ได้: ' + error.message, 'error');
+                    });
+            } else {
+                showLoginModal();
             }
+        });
 
+        // Set min date for booking inputs
+        const today = formatDate(new Date());
+        startDateInput.setAttribute('min', today);
+        endDateInput.setAttribute('min', today);
+
+        addEventListeners();
+        loadCalendar();
+    }
+
+    function addEventListeners() {
+        document.querySelectorAll('.close-modal').forEach(button => {
+            button.addEventListener('click', () => {
+                loginModal.classList.remove('active');
+                bookingModal.classList.remove('active');
+                viewBookingsModal.classList.remove('active');
+                myBookingsModal.classList.remove('active');
+                adminModal.classList.remove('active');
+                carFormModal.classList.remove('active');
+                userFormModal.classList.remove('active');
+            });
+        });
+
+        // Tab navigation for admin
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab + 'Tab').classList.add('active');
+            });
+        });
+
+        prevMonthBtn.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            loadCalendar();
+        });
+
+        nextMonthBtn.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            loadCalendar();
+        });
+
+        newBookingBtn.addEventListener('click', () => {
+            showBookingModal();
+        });
+
+        adminBtn.addEventListener('click', () => {
+            if (currentUser.role === 'admin') {
+                adminModal.classList.add('active');
+                loadCarsList();
+                if (users.length === 0) {
+                    database.ref('users').once('value').then((snapshot) => {
+                        const data = snapshot.val();
+                        if (data) {
+                            users = Object.keys(data).map(key => ({
+                                uid: key,
+                                ...data[key]
+                            }));
+                        }
+                        loadUsersList();
+                    });
+                } else {
+                    loadUsersList();
+                }
+            } else {
+                showSweetAlert('คุณไม่มีสิทธิ์เข้าถึง', 'error');
+            }
+        });
+
+        logoutBtn.addEventListener('click', logout);
+        loginForm.addEventListener('submit', handleLogin);
+        bookingForm.addEventListener('submit', handleBooking);
+        carForm.addEventListener('submit', handleCarForm);
+        userForm.addEventListener('submit', handleUserForm);
+        document.getElementById('cancelBooking').addEventListener('click', () => {
+            bookingModal.classList.remove('active');
             resetBookingForm();
+        });
+        document.getElementById('cancelCarForm').addEventListener('click', () => {
+            carFormModal.classList.remove('active');
+            resetCarForm();
+        });
+        document.getElementById('cancelUserForm').addEventListener('click', () => {
+            userFormModal.classList.remove('active');
+            resetUserForm();
+        });
+        document.getElementById('addCarBtn').addEventListener('click', () => showCarFormModal());
+        document.getElementById('addUserBtn').addEventListener('click', () => showUserFormModal());
+        viewAllMyBookingsBtn.addEventListener('click', showMyBookingsModal);
+        bookAction.addEventListener('click', () => {
+            actionMenu.classList.remove('active');
+            showBookingModal(selectedDate);
+        });
+        viewAction.addEventListener('click', () => {
+            actionMenu.classList.remove('active');
+            showViewBookingsModal(selectedDate);
+        });
+        document.querySelectorAll('input[name="purpose"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'normal') {
+                    carSelectGroup.style.display = 'block';
+                    carSelect.setAttribute('required', 'required');
+                } else {
+                    carSelectGroup.style.display = 'none';
+                    carSelect.removeAttribute('required');
+                    carSelect.value = '';
+                }
+            });
+        });
+        document.addEventListener('click', (e) => {
+            if (!actionMenu.contains(e.target)) {
+                actionMenu.classList.remove('active');
+            }
+        });
+        homeNav.addEventListener('click', (e) => {
+            e.preventDefault();
+        });
+        bookingsNav.addEventListener('click', (e) => {
+            e.preventDefault();
+            showMyBookingsModal();
+        });
+        logoutNav.addEventListener('click', (e) => {
+            e.preventDefault();
+            logout();
+        });
+    }
 
+    function showLoginModal() {
+        loginModal.classList.add('active');
+    }
+
+    function showBookingModal(selectedDay = null, bookingToEdit = null) {
+        if (cars.length === 0) {
+            showSweetAlert('กำลังโหลดข้อมูลรถยนต์ กรุณารอสักครู่', 'warning');
+            return;
+        }
+
+        resetBookingForm();
+
+        if (bookingToEdit) {
+            // โหมดแก้ไขการจอง
+            bookingModalTitle.textContent = "แก้ไขการจองรถยนต์";
+            saveBookingBtn.textContent = "อัพเดตการจอง";
+            bookingIdInput.value = bookingToEdit.id;
+            
+            // เติมข้อมูลในฟอร์ม
+            startDateInput.value = bookingToEdit.startDate;
+            endDateInput.value = bookingToEdit.endDate;
+            bookerNameInput.value = bookingToEdit.bookerName;
+            departmentInput.value = bookingToEdit.department;
+            
+            // ตั้งค่าวัตถุประสงค์
+            document.querySelector(`input[name="purpose"][value="${bookingToEdit.purpose}"]`).checked = true;
+            if (bookingToEdit.purpose === 'normal') {
+                carSelectGroup.style.display = 'block';
+                carSelect.value = bookingToEdit.carId;
+            } else {
+                carSelectGroup.style.display = 'none';
+            }
+            
+            // ตั้งค่าสถานะการขับ
+            document.querySelector(`input[name="driverStatus"][value="${bookingToEdit.driverStatus}"]`).checked = true;
+            
+            // ตั้งค่าเวลา
+            document.getElementById('startTime').value = bookingToEdit.startTime;
+            document.getElementById('endTime').value = bookingToEdit.endTime;
+            document.getElementById('destination').value = bookingToEdit.destination;
+            document.getElementById('notes').value = bookingToEdit.notes || '';
+            
+            // สำหรับแอดมิน: แสดงการควบคุมสถานะ
+            if (currentUser.role === 'admin') {
+                adminControls.style.display = 'block';
+                document.querySelector(`input[name="approvalStatus"][value="${bookingToEdit.status}"]`).checked = true;
+            }
+        } else {
+            // โหมดจองใหม่
             if (selectedDay) {
                 const dateStr = formatDate(selectedDay);
                 startDateInput.value = dateStr;
@@ -1578,862 +1629,981 @@
             }
 
             if (currentUser) {
+                // แก้ไขตรงนี้ - ใช้ displayName แทนอีเมล
                 bookerNameInput.value = currentUser.displayName || currentUser.email.split('@')[0];
                 departmentInput.value = currentUser.department || 'ไม่ระบุ';
             }
 
             bookingModalTitle.textContent = "จองรถยนต์";
             saveBookingBtn.textContent = "บันทึกการจอง";
-            bookingModal.classList.add('active');
+        }
+        
+        bookingModal.classList.add('active');
+    }
+
+    function showViewBookingsModal(selectedDay) {
+        const dateStr = formatDate(selectedDay);
+        const dayBookings = bookings.filter(booking =>
+            (booking.startDate === dateStr || booking.endDate === dateStr)
+        ).sort((a, b) => new Date(b.startDate + 'T' + b.startTime) - new Date(a.startDate + 'T' + a.startTime));
+
+        viewBookingsDate.textContent = `วันที่: ${formatThaiDate(selectedDay)}`;
+        bookingsList.innerHTML = '';
+
+        if (dayBookings.length === 0) {
+            bookingsList.innerHTML = '<p>ไม่มีข้อมูลการจองในวันนี้</p>';
+        } else {
+            dayBookings.forEach(booking => {
+                const bookingItem = document.createElement('div');
+                bookingItem.className = `booking-item ${booking.status || 'pending'}`;
+
+                const isAdmin = currentUser.role === 'admin';
+                const isOwner = booking.userId === currentUser.uid;
+                const isPending = booking.status === 'pending';
+                const isApproved = booking.status === 'approved';
+                const isPastDate = new Date(booking.startDate) < new Date(formatDate(new Date()));
+                
+                // ตรวจสอบสิทธิ์การแก้ไข/ยกเลิก
+                const canEdit = !isPastDate && (
+                    (isAdmin) || 
+                    (isOwner && isPending)
+                );
+                
+                const canCancel = !isPastDate && (
+                    (isAdmin) || 
+                    (isOwner && (isPending || isApproved))
+                );
+
+                bookingItem.innerHTML = `
+                    <div class="booking-header">
+                        <div>
+                            <strong>${booking.bookerName}</strong> - ${getCarName(booking.carId)}
+                            <span class="status-badge status-${booking.status || 'pending'}">${getStatusText(booking.status || 'pending')}</span>
+                        </div>
+                        <div class="booking-actions">
+                            ${isAdmin && isPending ? `<button class="btn btn-sm btn-approve" onclick="approveBooking('${booking.id}')">อนุมัติ</button>` : ''}
+                            ${isAdmin && isPending ? `<button class="btn btn-sm btn-reject" onclick="rejectBooking('${booking.id}')">ปฏิเสธ</button>` : ''}
+                            ${canEdit ? `<button class="btn btn-sm btn-primary" onclick="editBooking('${booking.id}')">แก้ไข</button>` : ''}
+                            ${canCancel ? `<button class="btn btn-sm btn-danger" onclick="cancelBooking('${booking.id}')">ยกเลิก</button>` : ''}
+                        </div>
+                    </div>
+                    <div class="booking-details">
+                        <div>เวลา: ${booking.startTime} - ${booking.endTime}</div>
+                        <div>จุดหมาย: ${booking.destination}</div>
+                        <div>วัตถุประสงค์: ${getPurposeText(booking.purpose)}</div>
+                        ${booking.notes ? `<div>หมายเหตุ: ${booking.notes}</div>` : ''}
+                    </div>
+                `;
+                bookingsList.appendChild(bookingItem);
+            });
         }
 
-        function showViewBookingsModal(selectedDay) {
-            const dateStr = formatDate(selectedDay);
-            const dayBookings = bookings.filter(booking =>
-                (booking.startDate === dateStr || booking.endDate === dateStr)
-            ).sort((a, b) => new Date(b.startDate + 'T' + b.startTime) - new Date(a.startDate + 'T' + a.startTime));
+        viewBookingsModal.classList.add('active');
+    }
 
-            viewBookingsDate.textContent = `วันที่: ${formatThaiDate(selectedDay)}`;
-            bookingsList.innerHTML = '';
+    function editBooking(bookingId) {
+        const booking = bookings.find(b => b.id === bookingId);
+        if (booking) {
+            showBookingModal(null, booking);
+        }
+    }
 
-            if (dayBookings.length === 0) {
-                bookingsList.innerHTML = '<p>ไม่มีข้อมูลการจองในวันนี้</p>';
-            } else {
-                dayBookings.forEach(booking => {
-                    const bookingItem = document.createElement('div');
-                    bookingItem.className = `booking-item ${booking.status || 'pending'}`;
+    function approveBooking(bookingId) {
+        updateBookingStatus(bookingId, 'approved');
+    }
 
-                    const isAdmin = currentUser.role === 'admin';
-                    const isOwner = booking.userId === currentUser.uid;
-                    const isPending = booking.status === 'pending';
+    function rejectBooking(bookingId) {
+        updateBookingStatus(bookingId, 'rejected');
+    }
 
-                    bookingItem.innerHTML = `
-                        <div class="booking-header">
-                            <div>
-                                <strong>${booking.bookerName}</strong> - ${getCarName(booking.carId)}
-                                <span class="status-badge status-${booking.status || 'pending'}">${getStatusText(booking.status || 'pending')}</span>
-                            </div>
-                            <div class="booking-actions">
-                                ${isAdmin && isPending ? `<button class="btn btn-sm btn-approve" onclick="approveBooking('${booking.id}')">อนุมัติ</button>` : ''}
-                                ${isAdmin && isPending ? `<button class="btn btn-sm btn-reject" onclick="rejectBooking('${booking.id}')">ปฏิเสธ</button>` : ''}
-                                ${(isAdmin || isOwner) ? `<button class="btn btn-sm btn-danger" onclick="cancelBooking('${booking.id}')">ยกเลิก</button>` : ''}
-                            </div>
+    function updateBookingStatus(bookingId, status) {
+        database.ref('bookings/' + bookingId).update({ status: status })
+            .then(() => {
+                showSweetAlert(`การจองถูก${status === 'approved' ? 'อนุมัติ' : 'ปฏิเสธ'}แล้ว`, 'success');
+                viewBookingsModal.classList.remove('active');
+                updateMyTodayBookings(); // อัพเดตรายการทันที
+            })
+            .catch((error) => {
+                showSweetAlert('เกิดข้อผิดพลาด: ' + error.message, 'error');
+            });
+    }
+
+    function showMyBookingsModal() {
+        const myBookings = bookings.filter(booking => booking.userId === currentUser.uid)
+            .sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+
+        myBookingsList.innerHTML = '';
+
+        if (myBookings.length === 0) {
+            myBookingsList.innerHTML = '<p>คุณยังไม่มีรายการจองรถ</p>';
+        } else {
+            myBookings.forEach(booking => {
+                const bookingItem = document.createElement('div');
+                bookingItem.className = `booking-item ${booking.status || 'pending'}`;
+
+                const isPastDate = new Date(booking.startDate) < new Date(formatDate(new Date()));
+                const isPending = booking.status === 'pending';
+                const isApproved = booking.status === 'approved';
+                
+                // ตรวจสอบสิทธิ์การแก้ไข/ยกเลิก
+                const canEdit = !isPastDate && isPending;
+                const canCancel = !isPastDate && (isPending || isApproved);
+
+                bookingItem.innerHTML = `
+                    <div class="booking-header">
+                        <div>
+                            <strong>${formatThaiDate(new Date(booking.startDate))}</strong> - ${getCarName(booking.carId)}
+                            <span class="status-badge status-${booking.status || 'pending'}">${getStatusText(booking.status || 'pending')}</span>
                         </div>
-                        <div class="booking-details">
-                            <div>เวลา: ${booking.startTime} - ${booking.endTime}</div>
-                            <div>จุดหมาย: ${booking.destination}</div>
-                            <div>วัตถุประสงค์: ${getPurposeText(booking.purpose)}</div>
-                            ${booking.notes ? `<div>หมายเหตุ: ${booking.notes}</div>` : ''}
+                        <div class="booking-actions">
+                            ${canEdit ? `<button class="btn btn-sm btn-primary" onclick="editBooking('${booking.id}')">แก้ไข</button>` : ''}
+                            ${canCancel ? `<button class="btn btn-sm btn-danger" onclick="cancelBooking('${booking.id}')">ยกเลิก</button>` : ''}
                         </div>
-                    `;
-                    bookingsList.appendChild(bookingItem);
-                });
+                    </div>
+                    <div class="booking-details">
+                        <div>เวลา: ${booking.startTime} - ${booking.endTime}</div>
+                        <div>จุดหมาย: ${booking.destination}</div>
+                        <div>วัตถุประสงค์: ${getPurposeText(booking.purpose)}</div>
+                        ${booking.notes ? `<div>หมายเหตุ: ${booking.notes}</div>` : ''}
+                    </div>
+                `;
+                myBookingsList.appendChild(bookingItem);
+            });
+        }
+
+        myBookingsModal.classList.add('active');
+    }
+
+    function editCar(carId) {
+        const car = cars.find(c => c.id === carId);
+        if (car) {
+            showCarFormModal(car);
+        } else {
+            showSweetAlert('ไม่พบข้อมูลรถ', 'error');
+        }
+    }
+
+    function editUser(uid) {
+        const user = users.find(u => u.uid === uid);
+        if (user) {
+            showUserFormModal(user);
+        } else {
+            showSweetAlert('ไม่พบข้อมูลผู้ใช้', 'error');
+        }
+    }
+
+    function showCarFormModal(car = null) {
+        resetCarForm();
+        if (car) {
+            document.getElementById('carFormTitle').textContent = 'แก้ไขรถ';
+            document.getElementById('carId').value = car.id;
+            document.getElementById('carBrand').value = car.brand || '';
+            document.getElementById('carColor').value = car.color || '';
+            document.getElementById('carFuelType').value = car.fuelType || 'gasoline';
+            document.getElementById('carImageUrl').value = car.imageUrl || '';
+            document.getElementById('carLastMaintenance').value = car.lastMaintenance ? new Date(car.lastMaintenance).toISOString().split('T')[0] : '';
+        } else {
+            document.getElementById('carFormTitle').textContent = 'เพิ่มรถใหม่';
+            document.getElementById('carId').value = '';
+        }
+        carFormModal.classList.add('active');
+    }
+
+    function showUserFormModal(user = null) {
+        resetUserForm();
+        document.getElementById('userPasswordGroup').style.display = user ? 'none' : 'block';
+        if (user) {
+            document.getElementById('userFormTitle').textContent = 'แก้ไขผู้ใช้';
+            document.getElementById('userUid').value = user.uid;
+            document.getElementById('userEmail').value = user.email || '';
+            document.getElementById('userDisplayName').value = user.displayName || '';
+            document.getElementById('userDepartment').value = user.department || '';
+            document.getElementById('userRole').value = user.role || 'user';
+        } else {
+            document.getElementById('userFormTitle').textContent = 'เพิ่มผู้ใช้ใหม่';
+            document.getElementById('userUid').value = '';
+        }
+        userFormModal.classList.add('active');
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        auth.signInWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                currentUser = userCredential.user;
+                return database.ref('users/' + currentUser.uid).once('value');
+            })
+            .then((snapshot) => {
+                const userData = snapshot.val();
+                if (userData) {
+                    currentUser.displayName = userData.displayName || currentUser.email.split('@')[0];
+                    currentUser.role = userData.role || 'user';
+                    currentUser.department = userData.department || 'ไม่ระบุ';
+                } else {
+                    // ถ้าไม่มีข้อมูลผู้ใช้ในฐานข้อมูล ให้สร้างข้อมูลใหม่
+                    const username = currentUser.email.split('@')[0];
+                    const displayName = username.charAt(0).toUpperCase() + username.slice(1) + ' User';
+                    
+                    return database.ref('users/' + currentUser.uid).set({
+                        displayName: displayName,
+                        department: 'ไม่ระบุ',
+                        role: 'user',
+                        email: currentUser.email,
+                        createdAt: firebase.database.ServerValue.TIMESTAMP
+                    }).then(() => {
+                        currentUser.displayName = displayName;
+                        currentUser.role = 'user';
+                        currentUser.department = 'ไม่ระบุ';
+                    });
+                }
+            })
+            .then(() => {
+                loginModal.classList.remove('active');
+                showMainApp();
+                showSweetAlert('เข้าสู่ระบบสำเร็จ', 'success');
+            })
+            .catch((error) => {
+                let errorMessage = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'ไม่พบบัญชีผู้ใช้';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'รหัสผ่านไม่ถูกต้อง';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'รูปแบบอีเมลไม่ถูกต้อง';
+                }
+                showSweetAlert(errorMessage, 'error');
+            });
+    }
+
+    function handleBooking(e) {
+        e.preventDefault();
+
+        const purposeInput = document.querySelector('input[name="purpose"]:checked');
+        if (!purposeInput) {
+            showSweetAlert('กรุณาเลือกวัตถุประสงค์', 'error');
+            return;
+        }
+        const purpose = purposeInput.value;
+
+        let carId = 'none';
+        if (purpose === 'normal') {
+            if (!carSelect || !carSelect.value) {
+                showSweetAlert('กรุณาเลือกรถยนต์', 'error');
+                return;
             }
-
-            viewBookingsModal.classList.add('active');
+            carId = carSelect.value;
         }
 
-        function approveBooking(bookingId) {
-            updateBookingStatus(bookingId, 'approved');
+        if (!startDateInput || !startDateInput.value) {
+            showSweetAlert('กรุณาเลือกวันที่ออก', 'error');
+            return;
         }
 
-        function rejectBooking(bookingId) {
-            updateBookingStatus(bookingId, 'rejected');
+        const startDate = startDateInput.value;
+        const today = formatDate(new Date());
+        if (new Date(startDate) < new Date(today)) {
+            showSweetAlert('ไม่สามารถจองย้อนหลังได้', 'error');
+            return;
         }
 
-        function updateBookingStatus(bookingId, status) {
-            database.ref('bookings/' + bookingId).update({ status: status })
+        if (!document.getElementById('startTime') || !document.getElementById('startTime').value) {
+            showSweetAlert('กรุณาเลือกเวลาเริ่มต้น', 'error');
+            return;
+        }
+
+        if (!document.getElementById('endTime') || !document.getElementById('endTime').value) {
+            showSweetAlert('กรุณาเลือกเวลาสิ้นสุด', 'error');
+            return;
+        }
+
+        const startTime = document.getElementById('startTime').value;
+        const endTime = document.getElementById('endTime').value;
+        const bookingId = bookingIdInput.value || '';
+
+        if (purpose === 'normal') {
+            const isConflict = bookings.some(booking =>
+                booking.id !== bookingId &&
+                booking.carId === carId &&
+                booking.startDate === startDate &&
+                booking.status !== 'rejected' &&
+                ((startTime >= booking.startTime && startTime < booking.endTime) ||
+                 (endTime > booking.startTime && endTime <= booking.endTime) ||
+                 (startTime <= booking.startTime && endTime >= booking.endTime))
+            );
+
+            if (isConflict) {
+                showSweetAlert('รถคันนี้มีการจองในช่วงเวลานี้แล้ว', 'error');
+                return;
+            }
+        }
+
+        const bookingData = {
+            startDate: startDate,
+            endDate: endDateInput.value,
+            bookerName: bookerNameInput.value,
+            department: departmentInput.value,
+            carId: carId,
+            purpose: purpose,
+            driverStatus: document.querySelector('input[name="driverStatus"]:checked')?.value || 'self',
+            startTime: startTime,
+            endTime: endTime,
+            destination: document.getElementById('destination').value,
+            notes: document.getElementById('notes').value,
+            userId: currentUser.uid,
+            status: currentUser.role === 'admin' ? (document.querySelector('input[name="approvalStatus"]:checked')?.value || 'approved') : 'pending'
+        };
+
+        if (bookingId) {
+            updateBooking(bookingId, bookingData);
+        } else {
+            createBooking(bookingData);
+        }
+    }
+
+    function createBooking(bookingData) {
+        const newBookingRef = database.ref('bookings').push();
+        bookingData.id = newBookingRef.key;
+        bookingData.createdAt = firebase.database.ServerValue.TIMESTAMP;
+
+        newBookingRef.set(bookingData)
+            .then(() => {
+                bookingModal.classList.remove('active');
+                showSweetAlert('การจองรถสำเร็จ! รอการอนุมัติจากผู้ดูแลระบบ', 'success');
+                resetBookingForm();
+            })
+            .catch((error) => {
+                showSweetAlert('เกิดข้อผิดพลาดในการจอง: ' + error.message, 'error');
+            });
+    }
+
+    function updateBooking(bookingId, bookingData) {
+        database.ref('bookings/' + bookingId).update(bookingData)
+            .then(() => {
+                bookingModal.classList.remove('active');
+                showSweetAlert('อัพเดตการจองสำเร็จ', 'success');
+                resetBookingForm();
+                updateMyTodayBookings(); // อัพเดตรายการทันที
+            })
+            .catch((error) => {
+                showSweetAlert('เกิดข้อผิดพลาดในการอัพเดต: ' + error.message, 'error');
+            });
+    }
+
+    function cancelBooking(bookingId) {
+        const booking = bookings.find(b => b.id === bookingId);
+
+        if (!booking) return;
+
+        const isAdmin = currentUser.role === 'admin';
+        const isOwner = booking.userId === currentUser.uid;
+        const isPastDate = new Date(booking.startDate) < new Date(formatDate(new Date()));
+
+        if (!isAdmin && !isOwner) {
+            showSweetAlert('คุณไม่มีสิทธิ์ยกเลิกการจองนี้', 'error');
+            return;
+        }
+
+        if (!isAdmin && isPastDate) {
+            showSweetAlert('ไม่สามารถยกเลิกการจองย้อนหลังได้', 'error');
+            return;
+        }
+
+        Swal.fire({
+            title: 'คุณแน่ใจหรือไม่?',
+            text: "คุณต้องการยกเลิกการจองนี้หรือไม่?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'ใช่, ยกเลิก!',
+            cancelButtonText: 'ไม่, ยกเลิกการกระทำ'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                database.ref('bookings/' + bookingId).remove()
+                    .then(() => {
+                        showSweetAlert('ยกเลิกการจองสำเร็จ', 'success');
+                        updateMyTodayBookings(); // อัพเดตรายการทันที
+                    })
+                    .catch((error) => {
+                        showSweetAlert('เกิดข้อผิดพลาดในการยกเลิก: ' + error.message, 'error');
+                    });
+            }
+        });
+    }
+
+    function handleCarForm(e) {
+        e.preventDefault();
+        const carId = document.getElementById('carId').value;
+        const carData = {
+            brand: document.getElementById('carBrand').value,
+            color: document.getElementById('carColor').value,
+            fuelType: document.getElementById('carFuelType').value,
+            imageUrl: document.getElementById('carImageUrl').value,
+            lastMaintenance: document.getElementById('carLastMaintenance').value ? new Date(document.getElementById('carLastMaintenance').value).toISOString() : null,
+            createdAt: carId ? cars.find(c => c.id === carId).createdAt : firebase.database.ServerValue.TIMESTAMP
+        };
+
+        if (carId) {
+            database.ref('cars/' + carId).update(carData)
                 .then(() => {
-                    showSweetAlert(`การจองถูก${status === 'approved' ? 'อนุมัติ' : 'ปฏิเสธ'}แล้ว`, 'success');
-                    viewBookingsModal.classList.remove('active');
+                    showSweetAlert('อัพเดตรถสำเร็จ', 'success');
+                    carFormModal.classList.remove('active');
+                    loadCars();
+                    loadCarsList();
+                })
+                .catch((error) => {
+                    showSweetAlert('เกิดข้อผิดพลาด: ' + error.message, 'error');
+                });
+        } else {
+            const newCarRef = database.ref('cars').push();
+            carData.id = newCarRef.key;
+            newCarRef.set(carData)
+                .then(() => {
+                    showSweetAlert('เพิ่มรถสำเร็จ', 'success');
+                    carFormModal.classList.remove('active');
+                    loadCars();
+                    loadCarsList();
                 })
                 .catch((error) => {
                     showSweetAlert('เกิดข้อผิดพลาด: ' + error.message, 'error');
                 });
         }
+    }
 
-        function showMyBookingsModal() {
-            const myBookings = bookings.filter(booking => booking.userId === currentUser.uid)
-                .sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+    function handleUserForm(e) {
+        e.preventDefault();
+        const uid = document.getElementById('userUid').value;
+        const isNewUser = !uid;
+        const email = document.getElementById('userEmail').value;
+        const password = document.getElementById('userPassword').value;
+        const userData = {
+            displayName: document.getElementById('userDisplayName').value,
+            department: document.getElementById('userDepartment').value,
+            role: document.getElementById('userRole').value,
+            createdAt: isNewUser ? firebase.database.ServerValue.TIMESTAMP : users.find(u => u.uid === uid).createdAt,
+            email: email
+        };
 
-            myBookingsList.innerHTML = '';
-
-            if (myBookings.length === 0) {
-                myBookingsList.innerHTML = '<p>คุณยังไม่มีรายการจองรถ</p>';
-            } else {
-                myBookings.forEach(booking => {
-                    const bookingItem = document.createElement('div');
-                    bookingItem.className = `booking-item ${booking.status || 'pending'}`;
-
-                    bookingItem.innerHTML = `
-                        <div class="booking-header">
-                            <div>
-                                <strong>${formatThaiDate(new Date(booking.startDate))}</strong> - ${getCarName(booking.carId)}
-                                <span class="status-badge status-${booking.status || 'pending'}">${getStatusText(booking.status || 'pending')}</span>
-                            </div>
-                            <div class="booking-actions">
-                                <button class="btn btn-sm btn-danger" onclick="cancelBooking('${booking.id}')">ยกเลิก</button>
-                            </div>
-                        </div>
-                        <div class="booking-details">
-                            <div>เวลา: ${booking.startTime} - ${booking.endTime}</div>
-                            <div>จุดหมาย: ${booking.destination}</div>
-                            <div>วัตถุประสงค์: ${getPurposeText(booking.purpose)}</div>
-                            ${booking.notes ? `<div>หมายเหตุ: ${booking.notes}</div>` : ''}
-                        </div>
-                    `;
-                    myBookingsList.appendChild(bookingItem);
-                });
-            }
-
-            myBookingsModal.classList.add('active');
-        }
-
-        function editCar(carId) {
-            const car = cars.find(c => c.id === carId);
-            if (car) {
-                showCarFormModal(car);
-            } else {
-                showSweetAlert('ไม่พบข้อมูลรถ', 'error');
-            }
-        }
-
-        function editUser(uid) {
-            const user = users.find(u => u.uid === uid);
-            if (user) {
-                showUserFormModal(user);
-            } else {
-                showSweetAlert('ไม่พบข้อมูลผู้ใช้', 'error');
-            }
-        }
-
-        function showCarFormModal(car = null) {
-            resetCarForm();
-            if (car) {
-                document.getElementById('carFormTitle').textContent = 'แก้ไขรถ';
-                document.getElementById('carId').value = car.id;
-                document.getElementById('carBrand').value = car.brand || '';
-                document.getElementById('carColor').value = car.color || '';
-                document.getElementById('carFuelType').value = car.fuelType || 'gasoline';
-                document.getElementById('carImageUrl').value = car.imageUrl || '';
-                document.getElementById('carLastMaintenance').value = car.lastMaintenance ? new Date(car.lastMaintenance).toISOString().split('T')[0] : '';
-            } else {
-                document.getElementById('carFormTitle').textContent = 'เพิ่มรถใหม่';
-                document.getElementById('carId').value = '';
-            }
-            carFormModal.classList.add('active');
-        }
-
-        function showUserFormModal(user = null) {
-            resetUserForm();
-            document.getElementById('userPasswordGroup').style.display = user ? 'none' : 'block';
-            if (user) {
-                document.getElementById('userFormTitle').textContent = 'แก้ไขผู้ใช้';
-                document.getElementById('userUid').value = user.uid;
-                document.getElementById('userEmail').value = user.email || '';
-                document.getElementById('userDisplayName').value = user.displayName || '';
-                document.getElementById('userDepartment').value = user.department || '';
-                document.getElementById('userRole').value = user.role || 'user';
-            } else {
-                document.getElementById('userFormTitle').textContent = 'เพิ่มผู้ใช้ใหม่';
-                document.getElementById('userUid').value = '';
-            }
-            userFormModal.classList.add('active');
-        }
-
-        function handleLogin(e) {
-            e.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            auth.signInWithEmailAndPassword(email, password)
+        if (isNewUser) {
+            auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    currentUser = userCredential.user;
-                    return database.ref('users/' + currentUser.uid).once('value');
+                    const newUid = userCredential.user.uid;
+                    userData.uid = newUid;
+                    return database.ref('users/' + newUid).set(userData);
                 })
-                .then((snapshot) => {
-                    const userData = snapshot.val();
-                    let displayName = userData ? userData.displayName : null;
-                    if (!displayName || displayName.includes('@')) {
-                        // Generate a display name if not set or if it looks like an email
-                        const username = currentUser.email.split('@')[0];
-                        displayName = username.charAt(0).toUpperCase() + username.slice(1) + ' User';
-                        // Update database
-                        database.ref('users/' + currentUser.uid).update({
-                            displayName: displayName,
-                            department: userData ? userData.department || 'ไม่ระบุ' : 'ไม่ระบุ',
-                            role: userData ? userData.role || 'user' : 'user'
-                        });
-                    }
-                    currentUser.displayName = displayName;
-                    currentUser.role = userData ? userData.role || 'user' : 'user';
-                    currentUser.department = userData ? userData.department || 'ไม่ระบุ' : 'ไม่ระบุ';
-
-                    loginModal.classList.remove('active');
-                    showMainApp();
-                    showSweetAlert('เข้าสู่ระบบสำเร็จ', 'success');
-                })
-                .catch((error) => {
-                    let errorMessage = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
-                    if (error.code === 'auth/user-not-found') {
-                        errorMessage = 'ไม่พบบัญชีผู้ใช้';
-                    } else if (error.code === 'auth/wrong-password') {
-                        errorMessage = 'รหัสผ่านไม่ถูกต้อง';
-                    } else if (error.code === 'auth/invalid-email') {
-                        errorMessage = 'รูปแบบอีเมลไม่ถูกต้อง';
-                    }
-                    showSweetAlert(errorMessage, 'error');
-                });
-        }
-
-        function handleBooking(e) {
-            e.preventDefault();
-
-            const purposeInput = document.querySelector('input[name="purpose"]:checked');
-            if (!purposeInput) {
-                showSweetAlert('กรุณาเลือกวัตถุประสงค์', 'error');
-                return;
-            }
-            const purpose = purposeInput.value;
-
-            let carId = 'none';
-            if (purpose === 'normal') {
-                if (!carSelect || !carSelect.value) {
-                    showSweetAlert('กรุณาเลือกรถยนต์', 'error');
-                    return;
-                }
-                carId = carSelect.value;
-            }
-
-            if (!startDateInput || !startDateInput.value) {
-                showSweetAlert('กรุณาเลือกวันที่ออก', 'error');
-                return;
-            }
-
-            const startDate = startDateInput.value;
-            const today = formatDate(new Date());
-            if (new Date(startDate) < new Date(today)) {
-                showSweetAlert('ไม่สามารถจองย้อนหลังได้', 'error');
-                return;
-            }
-
-            if (!document.getElementById('startTime') || !document.getElementById('startTime').value) {
-                showSweetAlert('กรุณาเลือกเวลาเริ่มต้น', 'error');
-                return;
-            }
-
-            if (!document.getElementById('endTime') || !document.getElementById('endTime').value) {
-                showSweetAlert('กรุณาเลือกเวลาสิ้นสุด', 'error');
-                return;
-            }
-
-            const startTime = document.getElementById('startTime').value;
-            const endTime = document.getElementById('endTime').value;
-            const bookingId = bookingIdInput.value || '';
-
-            if (purpose === 'normal') {
-                const isConflict = bookings.some(booking =>
-                    booking.id !== bookingId &&
-                    booking.carId === carId &&
-                    booking.startDate === startDate &&
-                    booking.status !== 'rejected' &&
-                    ((startTime >= booking.startTime && startTime < booking.endTime) ||
-                     (endTime > booking.startTime && endTime <= booking.endTime) ||
-                     (startTime <= booking.startTime && endTime >= booking.endTime))
-                );
-
-                if (isConflict) {
-                    showSweetAlert('รถคันนี้มีการจองในช่วงเวลานี้แล้ว', 'error');
-                    return;
-                }
-            }
-
-            const bookingData = {
-                startDate: startDate,
-                endDate: endDateInput.value,
-                bookerName: bookerNameInput.value,
-                department: departmentInput.value,
-                carId: carId,
-                purpose: purpose,
-                driverStatus: document.querySelector('input[name="driverStatus"]:checked')?.value || 'self',
-                startTime: startTime,
-                endTime: endTime,
-                destination: document.getElementById('destination').value,
-                notes: document.getElementById('notes').value,
-                userId: currentUser.uid,
-                status: currentUser.role === 'admin' ? 'approved' : 'pending'
-            };
-
-            if (bookingId) {
-                updateBooking(bookingId, bookingData);
-            } else {
-                createBooking(bookingData);
-            }
-        }
-
-        function createBooking(bookingData) {
-            const newBookingRef = database.ref('bookings').push();
-            bookingData.id = newBookingRef.key;
-            bookingData.createdAt = firebase.database.ServerValue.TIMESTAMP;
-
-            newBookingRef.set(bookingData)
                 .then(() => {
-                    bookingModal.classList.remove('active');
-                    showSweetAlert('การจองรถสำเร็จ! รอการอนุมัติจากผู้ดูแลระบบ', 'success');
-                    resetBookingForm();
-                })
-                .catch((error) => {
-                    showSweetAlert('เกิดข้อผิดพลาดในการจอง: ' + error.message, 'error');
-                });
-        }
-
-        function updateBooking(bookingId, bookingData) {
-            database.ref('bookings/' + bookingId).update(bookingData)
-                .then(() => {
-                    bookingModal.classList.remove('active');
-                    showSweetAlert('อัพเดตการจองสำเร็จ', 'success');
-                    resetBookingForm();
-                })
-                .catch((error) => {
-                    showSweetAlert('เกิดข้อผิดพลาดในการอัพเดต: ' + error.message, 'error');
-                });
-        }
-
-        function cancelBooking(bookingId) {
-            const booking = bookings.find(b => b.id === bookingId);
-
-            if (!booking) return;
-
-            const isAdmin = currentUser.role === 'admin';
-            const isOwner = booking.userId === currentUser.uid;
-
-            if (!isAdmin && !isOwner) {
-                showSweetAlert('คุณไม่มีสิทธิ์ยกเลิกการจองนี้', 'error');
-                return;
-            }
-
-            Swal.fire({
-                title: 'คุณแน่ใจหรือไม่?',
-                text: "คุณต้องการยกเลิกการจองนี้หรือไม่?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'ใช่, ยกเลิก!',
-                cancelButtonText: 'ไม่, ยกเลิกการกระทำ'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    database.ref('bookings/' + bookingId).remove()
-                        .then(() => {
-                            showSweetAlert('ยกเลิกการจองสำเร็จ', 'success');
-                        })
-                        .catch((error) => {
-                            showSweetAlert('เกิดข้อผิดพลาดในการยกเลิก: ' + error.message, 'error');
-                        });
-                }
-            });
-        }
-
-        function handleCarForm(e) {
-            e.preventDefault();
-            const carId = document.getElementById('carId').value;
-            const carData = {
-                brand: document.getElementById('carBrand').value,
-                color: document.getElementById('carColor').value,
-                fuelType: document.getElementById('carFuelType').value,
-                imageUrl: document.getElementById('carImageUrl').value,
-                lastMaintenance: document.getElementById('carLastMaintenance').value ? new Date(document.getElementById('carLastMaintenance').value).toISOString() : null,
-                createdAt: carId ? cars.find(c => c.id === carId).createdAt : firebase.database.ServerValue.TIMESTAMP
-            };
-
-            if (carId) {
-                database.ref('cars/' + carId).update(carData)
-                    .then(() => {
-                        showSweetAlert('อัพเดตรถสำเร็จ', 'success');
-                        carFormModal.classList.remove('active');
-                        loadCars();
-                        loadCarsList();
-                    })
-                    .catch((error) => {
-                        showSweetAlert('เกิดข้อผิดพลาด: ' + error.message, 'error');
-                    });
-            } else {
-                const newCarRef = database.ref('cars').push();
-                carData.id = newCarRef.key;
-                newCarRef.set(carData)
-                    .then(() => {
-                        showSweetAlert('เพิ่มรถสำเร็จ', 'success');
-                        carFormModal.classList.remove('active');
-                        loadCars();
-                        loadCarsList();
-                    })
-                    .catch((error) => {
-                        showSweetAlert('เกิดข้อผิดพลาด: ' + error.message, 'error');
-                    });
-            }
-        }
-
-        function handleUserForm(e) {
-            e.preventDefault();
-            const uid = document.getElementById('userUid').value;
-            const isNewUser = !uid;
-            const email = document.getElementById('userEmail').value;
-            const password = document.getElementById('userPassword').value;
-            const userData = {
-                displayName: document.getElementById('userDisplayName').value,
-                department: document.getElementById('userDepartment').value,
-                role: document.getElementById('userRole').value,
-                createdAt: isNewUser ? firebase.database.ServerValue.TIMESTAMP : users.find(u => u.uid === uid).createdAt,
-                email: email
-            };
-
-            if (isNewUser) {
-                auth.createUserWithEmailAndPassword(email, password)
-                    .then((userCredential) => {
-                        const newUid = userCredential.user.uid;
-                        userData.uid = newUid;
-                        return database.ref('users/' + newUid).set(userData);
-                    })
-                    .then(() => {
-                        showSweetAlert('เพิ่มผู้ใช้สำเร็จ', 'success');
-                        userFormModal.classList.remove('active');
-                        loadUsers();
-                        loadUsersList();
-                    })
-                    .catch((error) => {
-                        showSweetAlert('เกิดข้อผิดพลาด: ' + error.message, 'error');
-                    });
-            } else {
-                database.ref('users/' + uid).update(userData)
-                    .then(() => {
-                        showSweetAlert('อัพเดตผู้ใช้สำเร็จ', 'success');
-                        userFormModal.classList.remove('active');
-                        loadUsers();
-                        loadUsersList();
-                    })
-                    .catch((error) => {
-                        showSweetAlert('เกิดข้อผิดพลาด: ' + error.message, 'error');
-                    });
-            }
-        }
-
-        function deleteCar(carId) {
-            Swal.fire({
-                title: 'คุณแน่ใจหรือไม่?',
-                text: "คุณต้องการลบรถนี้หรือไม่?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'ใช่, ลบ!',
-                cancelButtonText: 'ยกเลิก'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    database.ref('cars/' + carId).remove()
-                        .then(() => {
-                            showSweetAlert('ลบรถสำเร็จ', 'success');
-                            loadCars();
-                            loadCarsList();
-                        })
-                        .catch((error) => {
-                            showSweetAlert('เกิดข้อผิดพลาด: ' + error.message, 'error');
-                        });
-                }
-            });
-        }
-
-        function deleteUser(uid) {
-            Swal.fire({
-                title: 'คุณแน่ใจหรือไม่?',
-                text: "คุณต้องการลบผู้ใช้จากฐานข้อมูลหรือไม่? (บัญชี Firebase Auth จะยังคงอยู่ ต้องลบผ่าน Admin SDK)",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'ใช่, ลบ!',
-                cancelButtonText: 'ยกเลิก'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    database.ref('users/' + uid).remove()
-                        .then(() => {
-                            showSweetAlert('ลบผู้ใช้จากฐานข้อมูลสำเร็จ', 'success');
-                            loadUsers();
-                            loadUsersList();
-                        })
-                        .catch((error) => {
-                            showSweetAlert('เกิดข้อผิดพลาด: ' + error.message, 'error');
-                        });
-                }
-            });
-        }
-
-        function loadCars() {
-            database.ref('cars').on('value', (snapshot) => {
-                const carsData = snapshot.val();
-                if (carsData) {
-                    cars = Object.keys(carsData).map(key => ({
-                        id: key,
-                        ...carsData[key]
-                    }));
-                    updateCarSelect();
-                } else {
-                    initializeCars();
-                }
-            });
-        }
-
-        function loadUsers() {
-            database.ref('users').on('value', (snapshot) => {
-                const usersData = snapshot.val();
-                if (usersData) {
-                    users = Object.keys(usersData).map(key => ({
-                        uid: key,
-                        ...usersData[key]
-                    }));
-                } else {
-                    users = [];
-                }
-                if (adminModal.classList.contains('active')) {
+                    showSweetAlert('เพิ่มผู้ใช้สำเร็จ', 'success');
+                    userFormModal.classList.remove('active');
+                    loadUsers();
                     loadUsersList();
-                }
-            });
-        }
-
-        function loadBookings() {
-            database.ref('bookings').on('value', (snapshot) => {
-                const bookingsData = snapshot.val();
-                if (bookingsData) {
-                    bookings = Object.keys(bookingsData).map(key => ({
-                        id: key,
-                        ...bookingsData[key]
-                    }));
-                    loadCalendar();
-                    updateMyTodayBookings();
-                }
-            });
-        }
-
-        function loadCarsList() {
-            carsList.innerHTML = '';
-            cars.forEach(car => {
-                const carItem = document.createElement('div');
-                carItem.className = 'management-item';
-                carItem.innerHTML = `
-                    <div class="management-item-info">
-                        <strong>${car.brand || 'ไม่ระบุ'} (${car.color || 'ไม่ระบุ'})</strong>
-                        <div style="font-size: 0.85rem; color: var(--gray);">
-                            ID: ${car.id} | น้ำมัน: ${car.fuelType || 'ไม่ระบุ'} | 维护ล่าสุด: ${car.lastMaintenance ? new Date(car.lastMaintenance).toLocaleDateString('th-TH') : 'ไม่ระบุ'}
-                        </div>
-                    </div>
-                    <div class="management-actions">
-                        <button class="btn btn-sm btn-primary" onclick="editCar('${car.id}')">แก้ไข</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteCar('${car.id}')">ลบ</button>
-                    </div>
-                `;
-                carsList.appendChild(carItem);
-            });
-            if (cars.length === 0) {
-                carsList.innerHTML = '<p style="text-align: center; color: var(--gray);">ไม่มีข้อมูลรถยนต์</p>';
-            }
-        }
-
-        function loadUsersList() {
-            usersList.innerHTML = '';
-            users.forEach(user => {
-                const userItem = document.createElement('div');
-                userItem.className = 'management-item';
-                userItem.innerHTML = `
-                    <div class="management-item-info">
-                        <strong>${user.displayName || 'ไม่ระบุ'} (${user.role === 'admin' ? 'แอดมิน' : 'ผู้ใช้'})</strong>
-                        <div style="font-size: 0.85rem; color: var(--gray);">
-                            อีเมล: ${user.email || 'ไม่ระบุ'} | แผนก: ${user.department || 'ไม่ระบุ'}
-                        </div>
-                    </div>
-                    <div class="management-actions">
-                        <button class="btn btn-sm btn-primary" onclick="editUser('${user.uid}')">แก้ไข</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteUser('${user.uid}')">ลบ</button>
-                    </div>
-                `;
-                usersList.appendChild(userItem);
-            });
-            if (users.length === 0) {
-                usersList.innerHTML = '<p style="text-align: center; color: var(--gray);">ไม่มีข้อมูลผู้ใช้</p>';
-            }
-        }
-
-        function initializeCars() {
-            const defaultCars = [
-                { brand: 'Toyota', color: 'ขาว', fuelType: 'gasoline', imageUrl: '', lastMaintenance: '2023-09-15' },
-                { brand: 'Honda', color: 'ดำ', fuelType: 'gasoline', imageUrl: '', lastMaintenance: '2023-09-15' },
-                { brand: 'Mazda', color: 'แดง', fuelType: 'diesel', imageUrl: '', lastMaintenance: '2023-09-15' },
-                { brand: 'Ford', color: 'น้ำเงิน', fuelType: 'diesel', imageUrl: '', lastMaintenance: '2023-09-15' }
-            ];
-
-            defaultCars.forEach((car, index) => {
-                const carId = 'car' + (index + 1);
-                database.ref('cars/' + carId).set({
-                    ...car,
-                    id: carId,
-                    createdAt: firebase.database.ServerValue.TIMESTAMP
+                })
+                .catch((error) => {
+                    showSweetAlert('เกิดข้อผิดพลาด: ' + error.message, 'error');
                 });
-            });
-        }
-
-        function logout() {
-            Swal.fire({
-                title: 'ออกจากระบบ?',
-                text: "คุณต้องการออกจากระบบหรือไม่?",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'ใช่, ออกจากระบบ!',
-                cancelButtonText: 'ยกเลิก'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    auth.signOut()
-                        .then(() => {
-                            currentUser = null;
-                            showLoginModal();
-                            mainContent.style.display = 'none';
-                        })
-                        .catch((error) => {
-                            showSweetAlert('เกิดข้อผิดพลาดในการออกจากระบบ: ' + error.message, 'error');
-                        });
-                }
-            });
-        }
-
-        function showMainApp() {
-            loadingIndicator.style.display = 'none';
-            mainContent.style.display = 'block';
-
-            if (currentUser) {
-                userAvatar.textContent = currentUser.displayName ? currentUser.displayName.charAt(0) : currentUser.email.charAt(0);
-                userName.textContent = currentUser.displayName || currentUser.email.split('@')[0];
-
-                if (currentUser.role === 'admin') {
-                    adminControls.style.display = 'block';
-                    adminBtn.style.display = 'inline-block';
-                }
-            }
-        }
-
-        function loadCalendar() {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
-            const monthNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
-                "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-            currentMonthElement.textContent = `${monthNames[month]} ${year + 543}`;
-
-            const firstDay = new Date(year, month, 1);
-            const lastDay = new Date(year, month + 1, 0);
-            const daysInMonth = lastDay.getDate();
-            const firstDayOfWeek = firstDay.getDay();
-            const today = new Date();
-            const isCurrentMonth = today.getMonth() === month && today.getFullYear() === year;
-
-            calendarDays.innerHTML = '';
-
-            const prevMonthLastDay = new Date(year, month, 0).getDate();
-            for (let i = firstDayOfWeek - 1; i >= 0; i--) {
-                const dayElement = document.createElement('div');
-                dayElement.className = 'calendar-day other-month';
-                dayElement.innerHTML = `
-                    <div class="day-number">${prevMonthLastDay - i}</div>
-                `;
-                calendarDays.appendChild(dayElement);
-            }
-
-            for (let i = 1; i <= daysInMonth; i++) {
-                const dayElement = document.createElement('div');
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-                dayElement.dataset.date = dateStr;
-
-                const isPastDate = new Date(dateStr) < new Date(formatDate(new Date()));
-                if (isCurrentMonth && i === today.getDate()) {
-                    dayElement.className = 'calendar-day today';
-                } else if (isPastDate) {
-                    dayElement.className = 'calendar-day';
-                } else {
-                    dayElement.className = 'calendar-day';
-                }
-
-                const dayBookings = bookings.filter(booking =>
-                    (booking.startDate === dateStr || booking.endDate === dateStr)
-                );
-
-                let bookingIndicator = '';
-                if (dayBookings.length > 0) {
-                    dayElement.classList.add('has-booking');
-                    bookingIndicator = `<div class="booking-indicator">${dayBookings.length} การจอง</div>`;
-                }
-
-                dayElement.innerHTML = `
-                    <div class="day-number">${i}</div>
-                    ${bookingIndicator}
-                `;
-
-                dayElement.addEventListener('click', (e) => {
-                    if (currentUser) {
-                        document.querySelectorAll('.calendar-day').forEach(day => {
-                            day.classList.remove('selected');
-                        });
-                        dayElement.classList.add('selected');
-                        selectedDate = new Date(year, month, i);
-
-                        const isPast = new Date(dateStr) < new Date(formatDate(new Date()));
-                        if (isPast) {
-                            showViewBookingsModal(selectedDate);
-                        } else {
-                            const rect = dayElement.getBoundingClientRect();
-                            actionMenu.style.top = `${rect.bottom + window.scrollY}px`;
-                            actionMenu.style.left = `${rect.left + window.scrollX}px`;
-
-                            actionMenu.classList.add('active');
-                        }
-                    } else {
-                        showLoginModal();
-                    }
-
-                    e.stopPropagation();
+        } else {
+            database.ref('users/' + uid).update(userData)
+                .then(() => {
+                    showSweetAlert('อัพเดตผู้ใช้สำเร็จ', 'success');
+                    userFormModal.classList.remove('active');
+                    loadUsers();
+                    loadUsersList();
+                })
+                .catch((error) => {
+                    showSweetAlert('เกิดข้อผิดพลาด: ' + error.message, 'error');
                 });
-
-                calendarDays.appendChild(dayElement);
-            }
-
-            const totalCells = 42;
-            const remainingCells = totalCells - (firstDayOfWeek + daysInMonth);
-            for (let i = 1; i <= remainingCells; i++) {
-                const dayElement = document.createElement('div');
-                dayElement.className = 'calendar-day other-month';
-                dayElement.innerHTML = `
-                    <div class="day-number">${i}</div>
-                `;
-                calendarDays.appendChild(dayElement);
-            }
         }
+    }
 
-        function updateMyTodayBookings() {
-            const today = formatDate(new Date());
-            const myTodayBookingsList = bookings.filter(booking =>
-                booking.userId === currentUser.uid &&
-                (booking.startDate === today || booking.endDate === today)
-            ).sort((a, b) => new Date(b.startDate + 'T' + b.startTime) - new Date(a.startDate + 'T' + a.startTime));
+    function deleteCar(carId) {
+        Swal.fire({
+            title: 'คุณแน่ใจหรือไม่?',
+            text: "คุณต้องการลบรถนี้หรือไม่?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'ใช่, ลบ!',
+            cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                database.ref('cars/' + carId).remove()
+                    .then(() => {
+                        showSweetAlert('ลบรถสำเร็จ', 'success');
+                        loadCars();
+                        loadCarsList();
+                    })
+                    .catch((error) => {
+                        showSweetAlert('เกิดข้อผิดพลาด: ' + error.message, 'error');
+                    });
+                }
+        });
+    }
 
-            myTodayBookings.innerHTML = '';
+    function deleteUser(uid) {
+        Swal.fire({
+            title: 'คุณแน่ใจหรือไม่?',
+            text: "คุณต้องการลบผู้ใช้จากฐานข้อมูลหรือไม่? (บัญชี Firebase Auth จะยังคงอยู่ ต้องลบผ่าน Admin SDK)",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'ใช่, ลบ!',
+            cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                database.ref('users/' + uid).remove()
+                    .then(() => {
+                        showSweetAlert('ลบผู้ใช้จากฐานข้อมูลสำเร็จ', 'success');
+                        loadUsers();
+                        loadUsersList();
+                    })
+                    .catch((error) => {
+                        showSweetAlert('เกิดข้อผิดพลาด: ' + error.message, 'error');
+                    });
+            }
+        });
+    }
 
-            if (myTodayBookingsList.length === 0) {
-                myTodayBookings.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 20px;">ไม่มีรายการจองรถวันนี้</p>';
+    function loadCars() {
+        database.ref('cars').on('value', (snapshot) => {
+            const carsData = snapshot.val();
+            if (carsData) {
+                cars = Object.keys(carsData).map(key => ({
+                    id: key,
+                    ...carsData[key]
+                }));
+                updateCarSelect();
             } else {
-                myTodayBookingsList.forEach(booking => {
-                    const bookingItem = document.createElement('div');
-                    bookingItem.className = `my-booking-item ${booking.status || 'pending'}`;
-                    bookingItem.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
-                            <div>
-                                <div style="font-weight: 600; margin-bottom: 4px;">${getCarName(booking.carId)}</div>
-                                <div style="font-size: 0.8rem; color: var(--gray);">${booking.startTime} - ${booking.endTime}</div>
-                            </div>
-                            <span class="status-badge status-${booking.status || 'pending'}">${getStatusText(booking.status || 'pending')}</span>
-                        </div>
-                        <div style="font-size: 0.8rem; color: var(--dark);">
-                            <div>${getPurposeText(booking.purpose)} • ${booking.destination}</div>
-                        </div>
-                    `;
-                    myTodayBookings.appendChild(bookingItem);
-                });
+                initializeCars();
+            }
+        });
+    }
+
+    function loadUsers() {
+        database.ref('users').on('value', (snapshot) => {
+            const usersData = snapshot.val();
+            if (usersData) {
+                users = Object.keys(usersData).map(key => ({
+                    uid: key,
+                    ...usersData[key]
+                }));
+            } else {
+                users = [];
+            }
+            if (adminModal.classList.contains('active')) {
+                loadUsersList();
+            }
+        });
+    }
+
+    function loadBookings() {
+        database.ref('bookings').on('value', (snapshot) => {
+            const bookingsData = snapshot.val();
+            if (bookingsData) {
+                bookings = Object.keys(bookingsData).map(key => ({
+                    id: key,
+                    ...bookingsData[key]
+                }));
+                loadCalendar();
+                updateMyTodayBookings();
+            }
+        });
+    }
+
+    function loadCarsList() {
+        carsList.innerHTML = '';
+        cars.forEach(car => {
+            const carItem = document.createElement('div');
+            carItem.className = 'management-item';
+            carItem.innerHTML = `
+                <div class="management-item-info">
+                    <strong>${car.brand || 'ไม่ระบุ'} (${car.color || 'ไม่ระบุ'})</strong>
+                    <div style="font-size: 0.85rem; color: var(--gray);">
+                        ID: ${car.id} | น้ำมัน: ${car.fuelType || 'ไม่ระบุ'} | 维护ล่าสุด: ${car.lastMaintenance ? new Date(car.lastMaintenance).toLocaleDateString('th-TH') : 'ไม่ระบุ'}
+                    </div>
+                </div>
+                <div class="management-actions">
+                    <button class="btn btn-sm btn-primary" onclick="editCar('${car.id}')">แก้ไข</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteCar('${car.id}')">ลบ</button>
+                </div>
+            `;
+            carsList.appendChild(carItem);
+        });
+        if (cars.length === 0) {
+            carsList.innerHTML = '<p style="text-align: center; color: var(--gray);">ไม่มีข้อมูลรถยนต์</p>';
+        }
+    }
+
+    function loadUsersList() {
+        usersList.innerHTML = '';
+        
+        // ตรวจสอบว่ามีข้อมูลผู้ใช้หรือไม่
+        if (users.length === 0) {
+            usersList.innerHTML = '<p style="text-align: center; color: var(--gray);">ไม่มีข้อมูลผู้ใช้</p>';
+            return;
+        }
+        
+        users.forEach(user => {
+            const userItem = document.createElement('div');
+            userItem.className = 'management-item';
+            userItem.innerHTML = `
+                <div class="management-item-info">
+                    <strong>${user.displayName || 'ไม่ระบุ'} (${user.role === 'admin' ? 'แอดมิน' : 'ผู้ใช้'})</strong>
+                    <div style="font-size: 0.85rem; color: var(--gray);">
+                        อีเมล: ${user.email || 'ไม่ระบุ'} | แผนก: ${user.department || 'ไม่ระบุ'}
+                    </div>
+                </div>
+                <div class="management-actions">
+                    <button class="btn btn-sm btn-primary" onclick="editUser('${user.uid}')">แก้ไข</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteUser('${user.uid}')">ลบ</button>
+                </div>
+            `;
+            usersList.appendChild(userItem);
+        });
+    }
+
+    function initializeCars() {
+        const defaultCars = [
+            { brand: 'Toyota', color: 'ขาว', fuelType: 'gasoline', imageUrl: '', lastMaintenance: '2023-09-15' },
+            { brand: 'Honda', color: 'ดำ', fuelType: 'gasoline', imageUrl: '', lastMaintenance: '2023-09-15' },
+            { brand: 'Mazda', color: 'แดง', fuelType: 'diesel', imageUrl: '', lastMaintenance: '2023-09-15' },
+            { brand: 'Ford', color: 'น้ำเงิน', fuelType: 'diesel', imageUrl: '', lastMaintenance: '2023-09-15' }
+        ];
+
+        defaultCars.forEach((car, index) => {
+            const carId = 'car' + (index + 1);
+            database.ref('cars/' + carId).set({
+                ...car,
+                id: carId,
+                createdAt: firebase.database.ServerValue.TIMESTAMP
+            });
+        });
+    }
+
+    function logout() {
+        Swal.fire({
+            title: 'ออกจากระบบ?',
+            text: "คุณต้องการออกจากระบบหรือไม่?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'ใช่, ออกจากระบบ!',
+            cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                auth.signOut()
+                    .then(() => {
+                        currentUser = null;
+                        showLoginModal();
+                        mainContent.style.display = 'none';
+                    })
+                    .catch((error) => {
+                        showSweetAlert('เกิดข้อผิดพลาดในการออกจากระบบ: ' + error.message, 'error');
+                    });
+            }
+        });
+    }
+
+    function showMainApp() {
+        loadingIndicator.style.display = 'none';
+        mainContent.style.display = 'block';
+
+        if (currentUser) {
+            // แก้ไขตรงนี้ - ใช้ displayName แทนอีเมล
+            userAvatar.textContent = currentUser.displayName ? currentUser.displayName.charAt(0).toUpperCase() : currentUser.email.charAt(0).toUpperCase();
+            userName.textContent = currentUser.displayName || currentUser.email.split('@')[0];
+
+            if (currentUser.role === 'admin') {
+                adminControls.style.display = 'block';
+                adminBtn.style.display = 'inline-block';
             }
         }
+    }
 
-        function updateCarSelect() {
-            carSelect.innerHTML = '<option value="">-- เลือกรถ --</option>';
-            cars.forEach(car => {
-                const option = document.createElement('option');
-                option.value = car.id;
-                option.textContent = car.brand || car.name || 'ไม่ระบุ';
-                carSelect.appendChild(option);
-            });
+    function loadCalendar() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const monthNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+            "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+        currentMonthElement.textContent = `${monthNames[month]} ${year + 543}`;
+
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        const firstDayOfWeek = firstDay.getDay();
+        const today = new Date();
+        const isCurrentMonth = today.getMonth() === month && today.getFullYear() === year;
+
+        calendarDays.innerHTML = '';
+
+        const prevMonthLastDay = new Date(year, month, 0).getDate();
+        for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day other-month';
+            dayElement.innerHTML = `
+                <div class="day-number">${prevMonthLastDay - i}</div>
+            `;
+            calendarDays.appendChild(dayElement);
         }
 
-        function resetBookingForm() {
-            bookingForm.reset();
-            bookingIdInput.value = '';
-            adminControls.style.display = 'none';
-            document.getElementById('selfDrive').checked = true;
-            document.getElementById('purposeNormal').checked = true;
-            carSelectGroup.style.display = 'block';
-            carSelect.setAttribute('required', 'required');
+        for (let i = 1; i <= daysInMonth; i++) {
+            const dayElement = document.createElement('div');
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+            dayElement.dataset.date = dateStr;
 
-            const today = formatDate(new Date());
-            startDateInput.value = today;
-            endDateInput.value = today;
-        }
+            const isPastDate = new Date(dateStr) < new Date(formatDate(new Date()));
+            if (isCurrentMonth && i === today.getDate()) {
+                dayElement.className = 'calendar-day today';
+            } else if (isPastDate) {
+                dayElement.className = 'calendar-day';
+            } else {
+                dayElement.className = 'calendar-day';
+            }
 
-        function resetCarForm() {
-            carForm.reset();
-            document.getElementById('carId').value = '';
-        }
+            const dayBookings = bookings.filter(booking =>
+                (booking.startDate === dateStr || booking.endDate === dateStr)
+            );
 
-        function resetUserForm() {
-            userForm.reset();
-            document.getElementById('userUid').value = '';
-            document.getElementById('userRole').value = 'user';
-            document.getElementById('userPasswordGroup').style.display = 'block';
-        }
+            let bookingIndicator = '';
+            if (dayBookings.length > 0) {
+                dayElement.classList.add('has-booking');
+                bookingIndicator = `<div class="booking-indicator">${dayBookings.length} การจอง</div>`;
+            }
 
-        function showSweetAlert(message, type) {
-            Swal.fire({
-                title: type === 'success' ? 'สำเร็จ!' : 'เกิดข้อผิดพลาด!',
-                text: message,
-                icon: type,
-                confirmButtonText: 'ตกลง',
-                customClass: {
-                    popup: 'sweet-alert-popup'
+            dayElement.innerHTML = `
+                <div class="day-number">${i}</div>
+                ${bookingIndicator}
+            `;
+
+            dayElement.addEventListener('click', (e) => {
+                if (currentUser) {
+                    document.querySelectorAll('.calendar-day').forEach(day => {
+                        day.classList.remove('selected');
+                    });
+                    dayElement.classList.add('selected');
+                    selectedDate = new Date(year, month, i);
+
+                    const isPast = new Date(dateStr) < new Date(formatDate(new Date()));
+                    if (isPast) {
+                        showViewBookingsModal(selectedDate);
+                    } else {
+                        const rect = dayElement.getBoundingClientRect();
+                        actionMenu.style.top = `${rect.bottom + window.scrollY}px`;
+                        actionMenu.style.left = `${rect.left + window.scrollX}px`;
+
+                        actionMenu.classList.add('active');
+                    }
+                } else {
+                    showLoginModal();
                 }
+
+                e.stopPropagation();
+            });
+
+            calendarDays.appendChild(dayElement);
+        }
+
+        const totalCells = 42;
+        const remainingCells = totalCells - (firstDayOfWeek + daysInMonth);
+        for (let i = 1; i <= remainingCells; i++) {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day other-month';
+            dayElement.innerHTML = `
+                <div class="day-number">${i}</div>
+            `;
+            calendarDays.appendChild(dayElement);
+        }
+    }
+
+    function updateMyTodayBookings() {
+        const today = formatDate(new Date());
+        const myTodayBookingsList = bookings.filter(booking =>
+            booking.userId === currentUser.uid &&
+            (booking.startDate === today || booking.endDate === today)
+        ).sort((a, b) => new Date(b.startDate + 'T' + b.startTime) - new Date(a.startDate + 'T' + a.startTime));
+
+        const pendingBookingsList = currentUser.role === 'admin' ? 
+            bookings.filter(booking => booking.status === 'pending')
+                .sort((a, b) => new Date(a.startDate + 'T' + a.startTime) - new Date(b.startDate + 'T' + b.startTime)) : [];
+
+        myTodayBookings.innerHTML = '';
+
+        // สำหรับแอดมิน: แสดงรายการที่รออนุมัติ
+        if (currentUser.role === 'admin' && pendingBookingsList.length > 0) {
+            const pendingSection = document.createElement('div');
+            pendingSection.innerHTML = `
+                <h4 style="margin: 16px 0 8px 0; color: var(--warning); display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-clock"></i>
+                    รายการจองที่รออนุมัติ
+                </h4>
+            `;
+            myTodayBookings.appendChild(pendingSection);
+
+            pendingBookingsList.forEach(booking => {
+                const bookingItem = document.createElement('div');
+                bookingItem.className = 'my-booking-item pending';
+                bookingItem.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 4px;">${getCarName(booking.carId)} - ${booking.bookerName}</div>
+                            <div style="font-size: 0.8rem; color: var(--gray);">${formatThaiDate(new Date(booking.startDate))} | ${booking.startTime} - ${booking.endTime}</div>
+                        </div>
+                        <span class="status-badge status-pending">รออนุมัติ</span>
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--dark); margin-bottom: 8px;">
+                        <div>${getPurposeText(booking.purpose)} • ${booking.destination}</div>
+                    </div>
+                    <div class="booking-actions" style="display: flex; gap: 6px; justify-content: flex-end;">
+                        <button class="btn btn-sm btn-approve" onclick="approveBooking('${booking.id}')">อนุมัติ</button>
+                        <button class="btn btn-sm btn-reject" onclick="rejectBooking('${booking.id}')">ปฏิเสธ</button>
+                    </div>
+                `;
+                myTodayBookings.appendChild(bookingItem);
             });
         }
 
-        function formatDate(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
+        // แสดงรายการจองของตัวเองวันนี้
+        if (myTodayBookingsList.length === 0) {
+            if (currentUser.role !== 'admin' || pendingBookingsList.length === 0) {
+                myTodayBookings.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 20px;">ไม่มีรายการจองรถวันนี้</p>';
+            }
+        } else {
+            const mySection = document.createElement('div');
+            mySection.innerHTML = `
+                <h4 style="margin: ${currentUser.role === 'admin' && pendingBookingsList.length > 0 ? '16px 0 8px 0' : '0 0 8px 0'}; color: var(--primary); display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-user"></i>
+                    การจองของฉันวันนี้
+                </h4>
+            `;
+            myTodayBookings.appendChild(mySection);
 
-        function formatThaiDate(date) {
-            const day = date.getDate();
-            const month = date.getMonth() + 1;
-            const year = date.getFullYear() + 543;
-            return `${day}/${month}/${year}`;
-        }
+            myTodayBookingsList.forEach(booking => {
+                const bookingItem = document.createElement('div');
+                bookingItem.className = `my-booking-item ${booking.status || 'pending'}`;
+                
+                const isPastDate = new Date(booking.startDate) < new Date(formatDate(new Date()));
+                const isPending = booking.status === 'pending';
+                const isApproved = booking.status === 'approved';
+                
+                // ตรวจสอบสิทธิ์การแก้ไข/ยกเลิก
+                const canEdit = !isPastDate && isPending;
+                const canCancel = !isPastDate && (isPending || isApproved);
 
-        function getCarName(carId) {
-            if (carId === 'none') return 'ไม่ต้องใช้รถ';
-            const car = cars.find(c => c.id === carId);
-            return car ? (car.brand || car.name || 'ไม่พบข้อมูลรถ') : 'ไม่พบข้อมูลรถ';
+                bookingItem.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 4px;">${getCarName(booking.carId)}</div>
+                            <div style="font-size: 0.8rem; color: var(--gray);">${booking.startTime} - ${booking.endTime}</div>
+                        </div>
+                        <span class="status-badge status-${booking.status || 'pending'}">${getStatusText(booking.status || 'pending')}</span>
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--dark); margin-bottom: ${canEdit || canCancel ? '8px' : '0'};">
+                        <div>${getPurposeText(booking.purpose)} • ${booking.destination}</div>
+                    </div>
+                    ${(canEdit || canCancel) ? `
+                    <div class="booking-actions" style="display: flex; gap: 6px; justify-content: flex-end;">
+                        ${canEdit ? `<button class="btn btn-sm btn-primary" onclick="editBooking('${booking.id}')">แก้ไข</button>` : ''}
+                        ${canCancel ? `<button class="btn btn-sm btn-danger" onclick="cancelBooking('${booking.id}')">ยกเลิก</button>` : ''}
+                    </div>
+                    ` : ''}
+                `;
+                myTodayBookings.appendChild(bookingItem);
+            });
         }
+    }
 
-        function getStatusText(status) {
-            const statusMap = {
-                'pending': 'รออนุมัติ',
-                'approved': 'อนุมัติ',
-                'rejected': 'ปฏิเสธ'
-            };
-            return statusMap[status] || status;
-        }
+    function updateCarSelect() {
+        carSelect.innerHTML = '<option value="">-- เลือกรถ --</option>';
+        cars.forEach(car => {
+            const option = document.createElement('option');
+            option.value = car.id;
+            option.textContent = car.brand || car.name || 'ไม่ระบุ';
+            carSelect.appendChild(option);
+        });
+    }
 
-        function getPurposeText(purpose) {
-            const purposeMap = {
-                'normal': 'ปกติ',
-                'leaveWork': 'ฝากงาน',
-                'carToWork': 'ติดรถไปติดต่องาน'
-            };
-            return purposeMap[purpose] || purpose;
-        }
+    function resetBookingForm() {
+        bookingForm.reset();
+        bookingIdInput.value = '';
+        adminControls.style.display = 'none';
+        document.getElementById('selfDrive').checked = true;
+        document.getElementById('purposeNormal').checked = true;
+        carSelectGroup.style.display = 'block';
+        carSelect.setAttribute('required', 'required');
 
-        document.addEventListener('DOMContentLoaded', initApp);
-    </script>
+        const today = formatDate(new Date());
+        startDateInput.value = today;
+        endDateInput.value = today;
+    }
+
+    function resetCarForm() {
+        carForm.reset();
+        document.getElementById('carId').value = '';
+    }
+
+    function resetUserForm() {
+        userForm.reset();
+        document.getElementById('userUid').value = '';
+        document.getElementById('userRole').value = 'user';
+        document.getElementById('userPasswordGroup').style.display = 'block';
+    }
+
+    function showSweetAlert(message, type) {
+        Swal.fire({
+            title: type === 'success' ? 'สำเร็จ!' : 'เกิดข้อผิดพลาด!',
+            text: message,
+            icon: type,
+            confirmButtonText: 'ตกลง',
+            customClass: {
+                popup: 'sweet-alert-popup'
+            }
+        });
+    }
+
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    function formatThaiDate(date) {
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear() + 543;
+        return `${day}/${month}/${year}`;
+    }
+
+    function getCarName(carId) {
+        if (carId === 'none') return 'ไม่ต้องใช้รถ';
+        const car = cars.find(c => c.id === carId);
+        return car ? (car.brand || car.name || 'ไม่พบข้อมูลรถ') : 'ไม่พบข้อมูลรถ';
+    }
+
+    function getStatusText(status) {
+        const statusMap = {
+            'pending': 'รออนุมัติ',
+            'approved': 'อนุมัติ',
+            'rejected': 'ปฏิเสธ'
+        };
+        return statusMap[status] || status;
+    }
+
+    function getPurposeText(purpose) {
+        const purposeMap = {
+            'normal': 'ปกติ',
+            'leaveWork': 'ฝากงาน',
+            'carToWork': 'ติดรถไปติดต่องาน'
+        };
+        return purposeMap[purpose] || purpose;
+    }
+
+    document.addEventListener('DOMContentLoaded', initApp);
+</script>
 </body>
 </html>
