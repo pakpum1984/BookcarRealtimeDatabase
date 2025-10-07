@@ -913,6 +913,8 @@
         }
 
         @media (max-width: 576px) {
+
+            
             .container {
                 padding: 12px;
             }
@@ -939,9 +941,87 @@
                 font-size: 0.55rem;
             }
         }
+
+                /* เพิ่มสไตล์สำหรับโหลดดิ้ง */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-logo {
+            font-size: 3rem;
+            color: white;
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite;
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ปรับปรุง responsive styles สำหรับปุ่มแอดมินในมือถือ */
+        @media (max-width: 768px) {
+            .admin-btn-desktop {
+                display: none !important;
+            }
+            
+            .admin-nav-mobile {
+                display: block !important;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .admin-btn-desktop {
+                display: inline-block !important;
+            }
+            
+            .admin-nav-mobile {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body class="loading">
+    <!-- เพิ่มหน้าจอโหลดดิ้ง -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo">
+            <i class="fas fa-car"></i>
+        </div>
+        <div class="loading-spinner"></div>
+        <div class="loading-text">กำลังโหลดระบบจองรถยนต์...</div>
+    </div>
+
     <!-- Login Modal -->
     <div class="modal" id="loginModal">
         <div class="modal-content">
@@ -968,9 +1048,9 @@
                 </form>
                 <div style="margin-top: 20px; padding: 16px; background: var(--light); border-radius: 12px;">
                     <h4 style="margin-bottom: 12px; color: var(--dark);">บัญชีทดสอบ:</h4>
-                    <p style="margin-bottom: 8px; font-size: 0.9rem;"><strong>ผู้ใช้ทั่วไป:</strong> user1@company.com / password1</p>
-                    <p style="margin-bottom: 8px; font-size: 0.9rem;"><strong>ผู้ใช้ทั่วไป:</strong> user2@company.com / password2</p>
-                    <p style="font-size: 0.9rem;"><strong>ผู้ดูแลระบบ:</strong> admin@company.com / admin123</p>
+               
+                    <p style="margin-bottom: 8px; font-size: 0.9rem;"><strong>ผู้ใช้ทั่วไป:</strong> parweenar@email.com / 622001</p>
+                    <p style="font-size: 0.9rem;"><strong>ผู้ดูแลระบบ:</strong> adminbookcarcm2@email.com / adminbookcarcm2</p>
                 </div>
             </div>
         </div>
@@ -1371,6 +1451,7 @@
     
 
     // DOM Elements
+    const loadingScreen = document.getElementById('loadingScreen');
     const loginModal = document.getElementById('loginModal');
     const bookingModal = document.getElementById('bookingModal');
     const viewBookingsModal = document.getElementById('viewBookingsModal');
@@ -1414,6 +1495,7 @@
     const myBookingsList = document.getElementById('myBookingsList');
     const carsList = document.getElementById('carsList');
     const usersList = document.getElementById('usersList');
+    
 
     // Bottom Nav Elements
     const homeNav = document.getElementById('homeNav');
@@ -1423,72 +1505,110 @@
     const adminNav = document.getElementById('adminNav');
     const bottomNavUl = document.getElementById('bottomNavUl');
 
-function initApp() {
-    // แสดง loading และซ่อน container
-    document.body.classList.add('loading');
-    loadingIndicator.style.display = 'flex';
-    mainContent.style.display = 'none';
-    document.querySelectorAll('.container').forEach(c => c.classList.remove('loaded'));
+    function initApp() {
+        // แสดง loading screen
+        loadingScreen.classList.remove('hidden');
+        
+        // แสดง loading และซ่อน container
+        document.body.classList.add('loading');
+        loadingIndicator.style.display = 'flex';
+        mainContent.style.display = 'none';
+        document.querySelectorAll('.container').forEach(c => c.classList.remove('loaded'));
 
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            currentUser = user;
-            // Force fetch user data ทุกครั้ง เพื่อความเสถียร
-            database.ref('users/' + currentUser.uid).once('value')
-                .then((snapshot) => {
-                    const userData = snapshot.val();
-                    console.log('Fetched user data:', userData); // Debug log (ลบได้)
-                    if (userData) {
-                        currentUser.displayName = userData.displayName || currentUser.email.split('@')[0];
-                        currentUser.department = userData.department || 'ไม่ระบุ'; // ยืนยัน set department
-                        currentUser.role = userData.role || 'user';
-                    } else {
-                        // ถ้าไม่มีข้อมูลผู้ใช้ในฐานข้อมูล ให้สร้างข้อมูลใหม่
-                        const username = currentUser.email.split('@')[0];
-                        const displayName = username.charAt(0).toUpperCase() + username.slice(1) + ' User';
-                        
-                        database.ref('users/' + currentUser.uid).set({
-                            displayName: displayName,
-                            department: 'ไม่ระบุ',
-                            role: 'user',
-                            email: currentUser.email,
-                            createdAt: firebase.database.ServerValue.TIMESTAMP
-                        });
-                        
-                        currentUser.displayName = displayName;
-                        currentUser.department = 'ไม่ระบุ';
-                        currentUser.role = 'user';
-                    }
-                    // Force reload global users ถ้าเป็น admin
-                    if (currentUser.role === 'admin') {
-                        loadUsers();
-                    }
-                    showMainApp();
-                    loadCars();
-                    loadBookings();
-                })
-                .catch((error) => {
-                    console.error('Error fetching user data:', error);
-                    showSweetAlert('ไม่สามารถดึงข้อมูลผู้ใช้ได้: ' + error.message, 'error');
-                });
-        } else {
-            showLoginModal();
-            // ซ่อน loading หลังจาก auth ตรวจสอบแล้ว
-            setTimeout(() => {
-                document.body.classList.remove('loading');
-                loadingIndicator.style.display = 'none';
-                document.querySelectorAll('.container').forEach(c => c.classList.add('loaded'));
-            }, 500);
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                // Force fetch user data ทุกครั้ง เพื่อความเสถียร
+                database.ref('users/' + currentUser.uid).once('value')
+                    .then((snapshot) => {
+                        const userData = snapshot.val();
+                        console.log('Fetched user data:', userData); // Debug log (ลบได้)
+                        if (userData) {
+                            currentUser.displayName = userData.displayName || currentUser.email.split('@')[0];
+                            currentUser.department = userData.department || 'ไม่ระบุ'; // ยืนยัน set department
+                            currentUser.role = userData.role || 'user';
+                        } else {
+                            // ถ้าไม่มีข้อมูลผู้ใช้ในฐานข้อมูล ให้สร้างข้อมูลใหม่
+                            const username = currentUser.email.split('@')[0];
+                            const displayName = username.charAt(0).toUpperCase() + username.slice(1) + ' User';
+                            
+                            database.ref('users/' + currentUser.uid).set({
+                                displayName: displayName,
+                                department: 'ไม่ระบุ',
+                                role: 'user',
+                                email: currentUser.email,
+                                createdAt: firebase.database.ServerValue.TIMESTAMP
+                            });
+                            
+                            currentUser.displayName = displayName;
+                            currentUser.department = 'ไม่ระบุ';
+                            currentUser.role = 'user';
+                        }
+                        // Force reload global users ถ้าเป็น admin
+                        if (currentUser.role === 'admin') {
+                            loadUsers();
+                        }
+                        showMainApp();
+                        loadCars();
+                        loadBookings();
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching user data:', error);
+                        showSweetAlert('ไม่สามารถดึงข้อมูลผู้ใช้ได้: ' + error.message, 'error');
+                    });
+            } else {
+                showLoginModal();
+                // ซ่อน loading screen หลังจาก auth ตรวจสอบแล้ว
+                setTimeout(() => {
+                    loadingScreen.classList.add('hidden');
+                    document.body.classList.remove('loading');
+                    loadingIndicator.style.display = 'none';
+                    document.querySelectorAll('.container').forEach(c => c.classList.add('loaded'));
+                }, 500);
+            }
+        });
+
+        // Set min date for booking inputs
+        const today = formatDate(new Date());
+        startDateInput.setAttribute('min', today);
+        endDateInput.setAttribute('min', today);
+
+        addEventListeners();
+    }
+
+    function showMainApp() {
+        // ซ่อน loading screen
+        loadingScreen.classList.add('hidden');
+        
+        loadingIndicator.style.display = 'none';
+        mainContent.style.display = 'block';
+        document.body.classList.remove('loading');
+        document.querySelectorAll('.container').forEach(c => c.classList.add('loaded'));
+        loadCalendar();
+
+        if (currentUser) {
+            // แสดงชื่อจริงเสมอ (displayName) ถ้าไม่มี fallback เป็นส่วนแรกของอีเมล
+            const displayName = currentUser.displayName || currentUser.email.split('@')[0];
+            userAvatar.textContent = displayName.charAt(0).toUpperCase();
+            userName.textContent = displayName;
+
+            if (currentUser.role === 'admin') {
+                adminControls.style.display = 'block';
+                adminBtn.style.display = 'inline-block';
+                // แสดง bottom nav สำหรับ admin
+                adminNavLi.style.display = 'block';
+                // ปรับ layout bottom nav ถ้ามี admin menu
+                const liCount = bottomNavUl.children.length;
+                bottomNavUl.style.justifyContent = liCount > 3 ? 'space-around' : 'space-around';
+                
+                // เพิ่มคลาสเพื่อจัดการการแสดงผลในมือถือ
+                adminBtn.classList.add('admin-btn-desktop');
+                adminNavLi.classList.add('admin-nav-mobile');
+            } else {
+                adminNavLi.style.display = 'none';
+            }
         }
-    });
-
-    // Set min date for booking inputs
-    const today = formatDate(new Date());
-    startDateInput.setAttribute('min', today);
-    endDateInput.setAttribute('min', today);
-
-    addEventListeners();
-}
+    }
 
     function addEventListeners() {
         document.querySelectorAll('.close-modal').forEach(button => {
@@ -2396,32 +2516,7 @@ function handleLogin(e) {
         });
     }
 
-    function showMainApp() {
-        loadingIndicator.style.display = 'none';
-        mainContent.style.display = 'block';
-        document.body.classList.remove('loading');
-        document.querySelectorAll('.container').forEach(c => c.classList.add('loaded'));
-        loadCalendar();
 
-        if (currentUser) {
-            // แสดงชื่อจริงเสมอ (displayName) ถ้าไม่มี fallback เป็นส่วนแรกของอีเมล
-            const displayName = currentUser.displayName || currentUser.email.split('@')[0];
-            userAvatar.textContent = displayName.charAt(0).toUpperCase();
-            userName.textContent = displayName;
-
-            if (currentUser.role === 'admin') {
-                adminControls.style.display = 'block';
-                adminBtn.style.display = 'inline-block';
-                // แสดง bottom nav สำหรับ admin
-                adminNavLi.style.display = 'block';
-                // ปรับ layout bottom nav ถ้ามี admin menu
-                const liCount = bottomNavUl.children.length;
-                bottomNavUl.style.justifyContent = liCount > 3 ? 'space-around' : 'space-around';
-            } else {
-                adminNavLi.style.display = 'none';
-            }
-        }
-    }
 
     function loadCalendar() {
         const year = currentDate.getFullYear();
