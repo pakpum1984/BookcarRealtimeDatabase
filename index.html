@@ -995,25 +995,17 @@
             .admin-btn-desktop {
                 display: none !important;
             }
-            
-            .admin-nav-mobile {
-                display: block !important;
-            }
         }
 
         @media (min-width: 769px) {
             .admin-btn-desktop {
                 display: inline-block !important;
             }
-            
-            .admin-nav-mobile {
-                display: none !important;
-            }
         }
     </style>
 </head>
 <body class="loading">
-    <!-- เพิ่มหน้าจอโหลดดิ้ง -->
+    <!-- หน้าจอโหลดดิ้ง (แสดงทันทีโดย default) -->
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-logo">
             <i class="fas fa-car"></i>
@@ -1325,7 +1317,7 @@
                         <div class="user-avatar" id="userAvatar">U</div>
                         <span id="userName">ผู้ใช้</span>
                         <button class="btn btn-secondary" id="logoutBtn">ออกจากระบบ</button>
-                        <button class="btn btn-warning" id="adminBtn" style="display: none;">จัดการข้อมูล</button>
+                        <button class="btn btn-warning admin-btn-desktop" id="adminBtn" style="display: none;">จัดการข้อมูล</button>
                     </div>
                 </div>
             </div>
@@ -1506,7 +1498,7 @@
     const bottomNavUl = document.getElementById('bottomNavUl');
 
     function initApp() {
-        // แสดง loading screen
+        // แสดง loading screen ทันที (remove hidden ถ้ามี)
         loadingScreen.classList.remove('hidden');
         
         // แสดง loading และซ่อน container
@@ -1601,14 +1593,13 @@ function updateUserDisplay() {
             adminControls.style.display = 'block';
             adminBtn.style.display = 'inline-block';
             // แสดง bottom nav สำหรับ admin
-            adminNavLi.style.display = 'block';
+            adminNavLi.style.display = 'list-item';
             // ปรับ layout bottom nav ถ้ามี admin menu
             const liCount = bottomNavUl.children.length;
             bottomNavUl.style.justifyContent = liCount > 3 ? 'space-around' : 'space-around';
             
             // เพิ่มคลาสเพื่อจัดการการแสดงผลในมือถือ
             adminBtn.classList.add('admin-btn-desktop');
-            adminNavLi.classList.add('admin-nav-mobile');
         } else {
             adminNavLi.style.display = 'none';
             adminBtn.style.display = 'none';
@@ -2889,5 +2880,3 @@ function showEditBookingModal(bookingId) {
 </script>
 </body>
 </html>
-
-
