@@ -124,12 +124,6 @@
             font-size: 0.9rem;
         }
 
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
         .btn-primary {
             background: white;
             color: var(--primary);
@@ -160,7 +154,7 @@
             color: white;
         }
 
-        .btn:hover:not(:disabled) {
+        .btn:hover {
             opacity: 0.9;
             transform: scale(1.05);
         }
@@ -1016,25 +1010,10 @@
                 display: none !important;
             }
         }
-
-        /* สไตล์สำหรับ anonymous user (view only) */
-        .view-only .btn-book {
-            display: none;
-        }
-
-        .view-only .new-booking-btn {
-            background: var(--gray);
-            color: white;
-            cursor: not-allowed;
-        }
-
-        .view-only .new-booking-btn:hover {
-            transform: none;
-        }
     </style>
 </head>
-<body>
-    <!-- หน้าจอโหลดดิ้ง (แสดงทันทีโดยไม่มี class hidden) -->
+<body class="loading">
+    <!-- เพิ่มหน้าจอโหลดดิ้ง -->
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-logo">
             <i class="fas fa-car"></i>
@@ -1323,7 +1302,7 @@
 
     <!-- Action Menu -->
     <div class="action-menu" id="actionMenu">
-        <div class="action-item book btn-book" id="bookAction">
+        <div class="action-item book" id="bookAction">
             <i class="fas fa-calendar-plus"></i>
             <span>จองรถ</span>
         </div>
@@ -1344,10 +1323,9 @@
                     </div>
                     <div class="user-info">
                         <div class="user-avatar" id="userAvatar">U</div>
-                        <span id="userName">ผู้เยี่ยมชม</span>
-                        <button class="btn btn-secondary" id="loginBtn" style="display: none;">เข้าสู่ระบบ</button>
-                        <button class="btn btn-secondary" id="logoutBtn" style="display: none;">ออกจากระบบ</button>
-                        <button class="btn btn-warning new-booking-btn" id="adminBtn" style="display: none;">จัดการข้อมูล</button>
+                        <span id="userName">ผู้ใช้</span>
+                        <button class="btn btn-secondary" id="logoutBtn">ออกจากระบบ</button>
+                        <button class="btn btn-warning" id="adminBtn" style="display: none;">จัดการข้อมูล</button>
                     </div>
                 </div>
             </div>
@@ -1372,7 +1350,7 @@
                                 <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
                             </div>
                             <h2 id="currentMonth">มกราคม 2023</h2>
-                            <button class="btn btn-primary new-booking-btn" id="newBookingBtn">จองรถ</button>
+                            <button class="btn btn-primary" id="newBookingBtn">จองรถ</button>
                         </div>
                         <div class="calendar-weekdays">
                             <div>อาทิตย์</div>
@@ -1392,7 +1370,7 @@
                         <div class="booking-summary card">
                             <h3 class="summary-title">
                                 <i class="fas fa-list"></i>
-                                คิวการจองวันนี้
+                                คิวการจองของท่านวันนี้
                             </h3>
                             <div id="myTodayBookings">
                                 <!-- My today bookings will be listed here -->
@@ -1432,31 +1410,25 @@
                 </a>
             </li>
             <li>
-                <a href="#" id="logoutNav" style="display: none;">
+                <a href="#" id="logoutNav">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>ออกจากระบบ</span>
-                </a>
-            </li>
-            <li id="loginNavLi" style="display: none;">
-                <a href="#" id="loginNav">
-                    <i class="fas fa-sign-in-alt"></i>
-                    <span>เข้าสู่ระบบ</span>
                 </a>
             </li>
         </ul>
     </nav>
 
-   <script>
+    <script>
     // Firebase Configuration
     const firebaseConfig = {
-        apiKey: "AIzaSyAFZGvjTZDiimtyyauEaRY5UeajLlMVKEA",
-        authDomain: "dataequipment-8a4e5.firebaseapp.com",
-        databaseURL: "https://dataequipment-8a4e5-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "dataequipment-8a4e5",
-        storageBucket: "dataequipment-8a4e5.firebasestorage.app",
-        messagingSenderId: "1016960943788",
-        appId: "1:1016960943788:web:ed8837e802aaf9f5e3c109",
-        measurementId: "G-XDF8SSH478"
+  apiKey: "AIzaSyAFZGvjTZDiimtyyauEaRY5UeajLlMVKEA",
+  authDomain: "dataequipment-8a4e5.firebaseapp.com",
+  databaseURL: "https://dataequipment-8a4e5-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "dataequipment-8a4e5",
+  storageBucket: "dataequipment-8a4e5.firebasestorage.app",
+  messagingSenderId: "1016960943788",
+  appId: "1:1016960943788:web:ed8837e802aaf9f5e3c109",
+  measurementId: "G-XDF8SSH478"
     };
 
     // Initialize Firebase
@@ -1466,13 +1438,17 @@
 
     // ตัวแปรสถานะแอปพลิเคชัน
     let currentUser = null;
-    let isAuthenticatedUser = false; // เพื่อแยก anonymous vs real user
     let currentDate = new Date();
     let selectedDate = null;
     let selectedBooking = null;
     let cars = [];
     let users = [];
     let bookings = [];
+
+
+
+
+    
 
     // DOM Elements
     const loadingScreen = document.getElementById('loadingScreen');
@@ -1493,7 +1469,6 @@
     const nextMonthBtn = document.getElementById('nextMonth');
     const newBookingBtn = document.getElementById('newBookingBtn');
     const logoutBtn = document.getElementById('logoutBtn');
-    const loginBtn = document.getElementById('loginBtn');
     const adminBtn = document.getElementById('adminBtn');
     const loadingIndicator = document.getElementById('loadingIndicator');
     const mainContent = document.getElementById('mainContent');
@@ -1520,83 +1495,76 @@
     const myBookingsList = document.getElementById('myBookingsList');
     const carsList = document.getElementById('carsList');
     const usersList = document.getElementById('usersList');
+    
 
     // Bottom Nav Elements
     const homeNav = document.getElementById('homeNav');
     const bookingsNav = document.getElementById('bookingsNav');
     const logoutNav = document.getElementById('logoutNav');
-    const loginNavLi = document.getElementById('loginNavLi');
-    const loginNav = document.getElementById('loginNav');
     const adminNavLi = document.getElementById('adminNavLi');
     const adminNav = document.getElementById('adminNav');
     const bottomNavUl = document.getElementById('bottomNavUl');
 
     function initApp() {
-        // ลบการ signInAnonymously ออกเพื่อหลีกเลี่ยง error ถ้า disabled
-        // ถ้าต้องการ anonymous, ต้อง enable ใน Firebase Console > Authentication > Sign-in method
+        // แสดง loading screen
+        loadingScreen.classList.remove('hidden');
+        
+        // แสดง loading และซ่อน container
+        document.body.classList.add('loading');
+        loadingIndicator.style.display = 'flex';
+        mainContent.style.display = 'none';
+        document.querySelectorAll('.container').forEach(c => c.classList.remove('loaded'));
 
         auth.onAuthStateChanged(user => {
-            currentUser = user;
             if (user) {
-                isAuthenticatedUser = !user.isAnonymous;
-                if (isAuthenticatedUser) {
-                    // ถ้าเป็น real user, load user data
-                    database.ref('users/' + currentUser.uid).once('value')
-                        .then((snapshot) => {
-                            const userData = snapshot.val();
-                            if (userData) {
-                                currentUser.displayName = userData.displayName || currentUser.email.split('@')[0];
-                                currentUser.department = userData.department || 'ไม่ระบุ';
-                                currentUser.role = userData.role || 'user';
-                            } else {
-                                // สร้าง user data ถ้าไม่มี
-                                const username = currentUser.email.split('@')[0];
-                                const displayName = username.charAt(0).toUpperCase() + username.slice(1) + ' User';
-                                
-                                database.ref('users/' + currentUser.uid).set({
-                                    displayName: displayName,
-                                    department: 'ไม่ระบุ',
-                                    role: 'user',
-                                    email: currentUser.email,
-                                    createdAt: firebase.database.ServerValue.TIMESTAMP
-                                });
-                                
-                                currentUser.displayName = displayName;
-                                currentUser.department = 'ไม่ระบุ';
-                                currentUser.role = 'user';
-                            }
-                            if (currentUser.role === 'admin') {
-                                loadUsers();
-                            }
-                            showMainApp();
-                            // Load data เฉพาะเมื่อมี user (รวม anonymous ถ้า enable)
-                            loadCars();
-                            loadBookings();
-                        })
-                        .catch((error) => {
-                            console.error('Error fetching user data:', error);
-                            showSweetAlert('ไม่สามารถดึงข้อมูลผู้ใช้ได้: ' + error.message, 'error');
-                            showMainApp(); // แสดง app อยู่ดีสำหรับ view only
-                            loadCars();
-                            loadBookings();
-                        });
-                } else {
-                    // Anonymous: view only
-                    currentUser.displayName = 'ผู้เยี่ยมชม';
-                    currentUser.department = 'ไม่ระบุ';
-                    currentUser.role = 'guest';
-                    showMainApp();
-                    loadCars();
-                    loadBookings();
-                }
+                currentUser = user;
+                // Force fetch user data ทุกครั้ง เพื่อความเสถียร
+                database.ref('users/' + currentUser.uid).once('value')
+                    .then((snapshot) => {
+                        const userData = snapshot.val();
+                        console.log('Fetched user data:', userData); // Debug log (ลบได้)
+                        if (userData) {
+                            currentUser.displayName = userData.displayName || currentUser.email.split('@')[0];
+                            currentUser.department = userData.department || 'ไม่ระบุ'; // ยืนยัน set department
+                            currentUser.role = userData.role || 'user';
+                        } else {
+                            // ถ้าไม่มีข้อมูลผู้ใช้ในฐานข้อมูล ให้สร้างข้อมูลใหม่
+                            const username = currentUser.email.split('@')[0];
+                            const displayName = username.charAt(0).toUpperCase() + username.slice(1) + ' User';
+                            
+                            database.ref('users/' + currentUser.uid).set({
+                                displayName: displayName,
+                                department: 'ไม่ระบุ',
+                                role: 'user',
+                                email: currentUser.email,
+                                createdAt: firebase.database.ServerValue.TIMESTAMP
+                            });
+                            
+                            currentUser.displayName = displayName;
+                            currentUser.department = 'ไม่ระบุ';
+                            currentUser.role = 'user';
+                        }
+                        // Force reload global users ถ้าเป็น admin
+                        if (currentUser.role === 'admin') {
+                            loadUsers();
+                        }
+                        showMainApp();
+                        loadCars();
+                        loadBookings();
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching user data:', error);
+                        showSweetAlert('ไม่สามารถดึงข้อมูลผู้ใช้ได้: ' + error.message, 'error');
+                    });
             } else {
-                // Guest mode: no auth, no data load to avoid errors
-                currentUser = null;
-                isAuthenticatedUser = false;
-                showMainApp();
-                updateUserDisplay();
-                updateUIVisibility();
-                // ไม่ load data เพื่อหลีกเลี่ยง permission error
+                showLoginModal();
+                // ซ่อน loading screen หลังจาก auth ตรวจสอบแล้ว
+                setTimeout(() => {
+                    loadingScreen.classList.add('hidden');
+                    document.body.classList.remove('loading');
+                    loadingIndicator.style.display = 'none';
+                    document.querySelectorAll('.container').forEach(c => c.classList.add('loaded'));
+                }, 500);
             }
         });
 
@@ -1608,63 +1576,50 @@
         addEventListeners();
     }
 
-    function showMainApp() {
-        // ซ่อน loading screen หลังจาก load เสร็จ
-        setTimeout(() => {
-            loadingScreen.classList.add('hidden');
-        }, 1000); // รอ 1 วินาทีเพื่อให้เห็น loading
-        
-        loadingIndicator.style.display = 'none';
-        mainContent.style.display = 'block';
-        document.querySelectorAll('.container').forEach(c => c.classList.add('loaded'));
-        loadCalendar();
+function showMainApp() {
+    // ซ่อน loading screen
+    loadingScreen.classList.add('hidden');
+    
+    loadingIndicator.style.display = 'none';
+    mainContent.style.display = 'block';
+    document.body.classList.remove('loading');
+    document.querySelectorAll('.container').forEach(c => c.classList.add('loaded'));
+    loadCalendar();
 
-        // อัพเดต UI ตามสถานะ user
-        updateUserDisplay();
-        updateUIVisibility();
-    }
+    // อัพเดตข้อมูลผู้ใช้ในฟังก์ชันนี้ด้วย
+    updateUserDisplay();
+}
 
-    function updateUserDisplay() {
-        if (currentUser && currentUser.displayName) {
-            userAvatar.textContent = currentUser.displayName.charAt(0).toUpperCase();
-            userName.textContent = currentUser.displayName;
+function updateUserDisplay() {
+    if (currentUser && currentUser.displayName) {
+        // ใช้ displayName จาก currentUser ที่โหลดมาแล้ว
+        const displayName = currentUser.displayName;
+        userAvatar.textContent = displayName.charAt(0).toUpperCase();
+        userName.textContent = displayName;
+
+        if (currentUser.role === 'admin') {
+            adminControls.style.display = 'block';
+            adminBtn.style.display = 'inline-block';
+            // แสดง bottom nav สำหรับ admin
+            adminNavLi.style.display = 'block';
+            // ปรับ layout bottom nav ถ้ามี admin menu
+            const liCount = bottomNavUl.children.length;
+            bottomNavUl.style.justifyContent = liCount > 3 ? 'space-around' : 'space-around';
+            
+            // เพิ่มคลาสเพื่อจัดการการแสดงผลในมือถือ
+            adminBtn.classList.add('admin-btn-desktop');
+            adminNavLi.classList.add('admin-nav-mobile');
         } else {
-            const emailName = currentUser ? (currentUser.email || currentUser.email.split('@')[0]) : 'ผู้เยี่ยมชม';
-            userAvatar.textContent = emailName.charAt(0).toUpperCase();
-            userName.textContent = emailName;
-        }
-    }
-
-    function updateUIVisibility() {
-        const app = document.getElementById('app');
-        const isViewOnly = !isAuthenticatedUser && !currentUser; // Guest mode if no user at all
-
-        if (isViewOnly) {
-            app.classList.add('view-only');
-            loginBtn.style.display = 'inline-block';
-            logoutBtn.style.display = 'none';
-            loginNavLi.style.display = 'block';
-            logoutNav.style.display = 'none';
-            newBookingBtn.disabled = true;
-            newBookingBtn.classList.add('new-booking-btn');
-            adminBtn.style.display = 'none';
             adminNavLi.style.display = 'none';
-            viewAllMyBookingsBtn.textContent = 'ดูการจองทั้งหมด';
-        } else {
-            app.classList.remove('view-only');
-            loginBtn.style.display = 'none';
-            logoutBtn.style.display = 'inline-block';
-            loginNavLi.style.display = 'none';
-            logoutNav.style.display = 'block';
-            newBookingBtn.disabled = false;
-            newBookingBtn.classList.remove('new-booking-btn');
-            if (currentUser && currentUser.role === 'admin') {
-                adminBtn.style.display = 'inline-block';
-                adminNavLi.style.display = 'block';
-            }
-            viewAllMyBookingsBtn.textContent = 'ดูการจองทั้งหมดของฉัน';
+            adminBtn.style.display = 'none';
         }
+    } else {
+        // ถ้ายังไม่มีข้อมูลผู้ใช้ ให้แสดงข้อมูลพื้นฐาน
+        const emailName = currentUser ? currentUser.email.split('@')[0] : 'ผู้ใช้';
+        userAvatar.textContent = emailName.charAt(0).toUpperCase();
+        userName.textContent = emailName;
     }
+}
 
     function addEventListeners() {
         document.querySelectorAll('.close-modal').forEach(button => {
@@ -1700,17 +1655,11 @@
         });
 
         newBookingBtn.addEventListener('click', () => {
-            if (!isAuthenticatedUser) {
-                showLoginModal();
-                return;
-            }
             showBookingModal();
         });
 
-        loginBtn.addEventListener('click', showLoginModal);
-
         adminBtn.addEventListener('click', () => {
-            if (currentUser && currentUser.role === 'admin') {
+            if (currentUser.role === 'admin') {
                 adminModal.classList.add('active');
                 loadCarsList();
                 if (users.length === 0) {
@@ -1751,19 +1700,9 @@
         });
         document.getElementById('addCarBtn').addEventListener('click', () => showCarFormModal());
         document.getElementById('addUserBtn').addEventListener('click', () => showUserFormModal());
-        viewAllMyBookingsBtn.addEventListener('click', () => {
-            if (!isAuthenticatedUser) {
-                showLoginModal();
-                return;
-            }
-            showMyBookingsModal();
-        });
+        viewAllMyBookingsBtn.addEventListener('click', showMyBookingsModal);
         bookAction.addEventListener('click', () => {
             actionMenu.classList.remove('active');
-            if (!isAuthenticatedUser) {
-                showLoginModal();
-                return;
-            }
             showBookingModal(selectedDate);
         });
         viewAction.addEventListener('click', () => {
@@ -1792,19 +1731,11 @@
         });
         bookingsNav.addEventListener('click', (e) => {
             e.preventDefault();
-            if (!isAuthenticatedUser) {
-                showLoginModal();
-                return;
-            }
             showMyBookingsModal();
         });
         logoutNav.addEventListener('click', (e) => {
             e.preventDefault();
             logout();
-        });
-        loginNav.addEventListener('click', (e) => {
-            e.preventDefault();
-            showLoginModal();
         });
         adminNav.addEventListener('click', (e) => {
             e.preventDefault();
@@ -1816,372 +1747,181 @@
         loginModal.classList.add('active');
     }
 
-    function showBookingModal(selectedDay = null, bookingToEdit = null) {
-        if (!isAuthenticatedUser) {
-            showLoginModal();
-            return;
-        }
+function showBookingModal(selectedDay = null, bookingToEdit = null) {
+    if (cars.length === 0) {
+        showSweetAlert('กำลังโหลดข้อมูลรถยนต์ กรุณารอสักครู่', 'warning');
+        return;
+    }
 
-        if (cars.length === 0) {
-            showSweetAlert('กำลังโหลดข้อมูลรถยนต์ กรุณารอสักครู่', 'warning');
-            return;
-        }
+    resetBookingForm();
 
-        resetBookingForm();
-
-        if (bookingToEdit) {
-            // โหมดแก้ไขการจอง (ไม่เปลี่ยนแปลง)
-            bookingModalTitle.textContent = "แก้ไขการจองรถยนต์";
-            saveBookingBtn.textContent = "อัพเดตการจอง";
-            bookingIdInput.value = bookingToEdit.id;
-            
-            // เติมข้อมูลในฟอร์ม
-            startDateInput.value = bookingToEdit.startDate;
-            endDateInput.value = bookingToEdit.endDate;
-            bookerNameInput.value = bookingToEdit.bookerName;
-            departmentInput.value = bookingToEdit.department;
-            
-            // ตั้งค่าวัตถุประสงค์
-            document.querySelector(`input[name="purpose"][value="${bookingToEdit.purpose}"]`).checked = true;
-            if (bookingToEdit.purpose === 'normal') {
-                carSelectGroup.style.display = 'block';
-                carSelect.value = bookingToEdit.carId;
-            } else {
-                carSelectGroup.style.display = 'none';
-            }
-            
-            // ตั้งค่าสถานะการขับ
-            document.querySelector(`input[name="driverStatus"][value="${bookingToEdit.driverStatus}"]`).checked = true;
-            
-            // ตั้งค่าเวลา
-            document.getElementById('startTime').value = bookingToEdit.startTime;
-            document.getElementById('endTime').value = bookingToEdit.endTime;
-            document.getElementById('destination').value = bookingToEdit.destination;
-            document.getElementById('notes').value = bookingToEdit.notes || '';
-            
-            // สำหรับแอดมิน: แสดงการควบคุมสถานะ
-            if (currentUser.role === 'admin') {
-                adminControls.style.display = 'block';
-                document.querySelector(`input[name="approvalStatus"][value="${bookingToEdit.status}"]`).checked = true;
-            }
-        } else {
-            // โหมดจองใหม่ - Force fetch ข้อมูล user จากฐานข้อมูลเพื่อให้แน่ใจ
-            if (currentUser) {
-                database.ref('users/' + currentUser.uid).once('value')
-                    .then((snapshot) => {
-                        const userData = snapshot.val();
-                        if (userData) {
-                            bookerNameInput.value = userData.displayName || currentUser.email.split('@')[0]; // ดึงชื่อจริงก่อน
-                            departmentInput.value = userData.department || 'ไม่ระบุ'; // แผนก (ซึ่งทำงานถูกต้องอยู่แล้ว)
-                            console.log('Fetched user for booking form - Name:', bookerNameInput.value, 'Dept:', departmentInput.value); // Debug log (ลบได้หลังทดสอบ)
-                        } else {
-                            // Fallback ถ้าไม่มีข้อมูล (ไม่น่าจะเกิด)
-                            bookerNameInput.value = currentUser.email.split('@')[0];
-                            departmentInput.value = 'ไม่ระบุ';
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Error fetching user data for booking:', error);
-                        showSweetAlert('ไม่สามารถดึงข้อมูลผู้ใช้ได้: ' + error.message, 'error');
-                    });
-            }
-
-            if (selectedDay) {
-                const dateStr = formatDate(selectedDay);
-                startDateInput.value = dateStr;
-                endDateInput.value = dateStr;
-            } else {
-                const today = formatDate(new Date());
-                startDateInput.value = today;
-                endDateInput.value = today;
-            }
-
-            bookingModalTitle.textContent = "จองรถยนต์";
-            saveBookingBtn.textContent = "บันทึกการจอง";
-        }
-
-        // เพิ่ม event listeners สำหรับ sync วันที่ (เฉพาะใน modal นี้)
-        const handleDateChange = function() {
-            if (new Date(endDateInput.value) < new Date(startDateInput.value)) {
-                endDateInput.value = startDateInput.value;
-            }
-            endDateInput.min = startDateInput.value;
-        };
-
-        const handleEndDateChange = function() {
-            if (new Date(endDateInput.value) < new Date(startDateInput.value)) {
-                endDateInput.value = startDateInput.value;
-            }
-        };
-
-        startDateInput.addEventListener('change', handleDateChange);
-        endDateInput.addEventListener('change', handleEndDateChange);
-
-        // ลบ listeners หลังปิด modal
-        const removeListeners = () => {
-            startDateInput.removeEventListener('change', handleDateChange);
-            endDateInput.removeEventListener('change', handleEndDateChange);
-        };
-
-        // เรียกหลังปิด modal
-        bookingModal.addEventListener('click', function closeHandler(e) {
-            if (!bookingModal.contains(e.target) || e.target.classList.contains('close-modal')) {
-                removeListeners();
-                bookingModal.removeEventListener('click', closeHandler);
-            }
-        });
+    if (bookingToEdit) {
+        // โหมดแก้ไขการจอง (ไม่เปลี่ยนแปลง)
+        bookingModalTitle.textContent = "แก้ไขการจองรถยนต์";
+        saveBookingBtn.textContent = "อัพเดตการจอง";
+        bookingIdInput.value = bookingToEdit.id;
         
-        bookingModal.classList.add('active');
+        // เติมข้อมูลในฟอร์ม
+        startDateInput.value = bookingToEdit.startDate;
+        endDateInput.value = bookingToEdit.endDate;
+        bookerNameInput.value = bookingToEdit.bookerName;
+        departmentInput.value = bookingToEdit.department;
+        
+        // ตั้งค่าวัตถุประสงค์
+        document.querySelector(`input[name="purpose"][value="${bookingToEdit.purpose}"]`).checked = true;
+        if (bookingToEdit.purpose === 'normal') {
+            carSelectGroup.style.display = 'block';
+            carSelect.value = bookingToEdit.carId;
+        } else {
+            carSelectGroup.style.display = 'none';
+        }
+        
+        // ตั้งค่าสถานะการขับ
+        document.querySelector(`input[name="driverStatus"][value="${bookingToEdit.driverStatus}"]`).checked = true;
+        
+        // ตั้งค่าเวลา
+        document.getElementById('startTime').value = bookingToEdit.startTime;
+        document.getElementById('endTime').value = bookingToEdit.endTime;
+        document.getElementById('destination').value = bookingToEdit.destination;
+        document.getElementById('notes').value = bookingToEdit.notes || '';
+        
+        // สำหรับแอดมิน: แสดงการควบคุมสถานะ
+        if (currentUser.role === 'admin') {
+            adminControls.style.display = 'block';
+            document.querySelector(`input[name="approvalStatus"][value="${bookingToEdit.status}"]`).checked = true;
+        }
+    } else {
+        // โหมดจองใหม่ - Force fetch ข้อมูล user จากฐานข้อมูลเพื่อให้แน่ใจ
+        if (currentUser) {
+            database.ref('users/' + currentUser.uid).once('value')
+                .then((snapshot) => {
+                    const userData = snapshot.val();
+                    if (userData) {
+                        bookerNameInput.value = userData.displayName || currentUser.email.split('@')[0]; // ดึงชื่อจริงก่อน
+                        departmentInput.value = userData.department || 'ไม่ระบุ'; // แผนก (ซึ่งทำงานถูกต้องอยู่แล้ว)
+                        console.log('Fetched user for booking form - Name:', bookerNameInput.value, 'Dept:', departmentInput.value); // Debug log (ลบได้หลังทดสอบ)
+                    } else {
+                        // Fallback ถ้าไม่มีข้อมูล (ไม่น่าจะเกิด)
+                        bookerNameInput.value = currentUser.email.split('@')[0];
+                        departmentInput.value = 'ไม่ระบุ';
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error fetching user data for booking:', error);
+                    showSweetAlert('ไม่สามารถดึงข้อมูลผู้ใช้ได้: ' + error.message, 'error');
+                });
+        }
+
+        if (selectedDay) {
+            const dateStr = formatDate(selectedDay);
+            startDateInput.value = dateStr;
+            endDateInput.value = dateStr;
+        } else {
+            const today = formatDate(new Date());
+            startDateInput.value = today;
+            endDateInput.value = today;
+        }
+
+        bookingModalTitle.textContent = "จองรถยนต์";
+        saveBookingBtn.textContent = "บันทึกการจอง";
     }
 
-    function showViewBookingsModal(selectedDay) {
-        const dateStr = formatDate(selectedDay);
-        const dayBookings = bookings.filter(booking =>
-            booking.startDate <= dateStr && booking.endDate >= dateStr
-        ).sort((a, b) => new Date(b.startDate + 'T' + b.startTime) - new Date(a.startDate + 'T' + a.startTime));
-
-        viewBookingsDate.textContent = `วันที่: ${formatThaiDate(selectedDay)} (การจองที่ครอบคลุมวันนี้)`;
-        bookingsList.innerHTML = '';
-
-        if (dayBookings.length === 0) {
-            bookingsList.innerHTML = '<p>ไม่มีข้อมูลการจองในวันนี้</p>';
-        } else {
-            dayBookings.forEach(booking => {
-                const bookingItem = document.createElement('div');
-                bookingItem.className = `booking-item ${booking.status || 'pending'}`;
-
-                const isAdmin = currentUser && currentUser.role === 'admin';
-                const isOwner = booking.userId === currentUser.uid;
-                const isPending = booking.status === 'pending';
-                const isApproved = booking.status === 'approved';
-                const isPastDate = new Date(booking.startDate) < new Date(formatDate(new Date()));
-                
-                // ปรับเงื่อนไข: ต้อง authenticated ก่อน
-                const canEdit = isAuthenticatedUser && !isPastDate && (
-                    (isAdmin && (isPending || isApproved)) ||
-                    (isOwner && isPending)
-                );
-                
-                const canCancel = isAuthenticatedUser && !isPastDate && (
-                    (isAdmin) || 
-                    (isOwner && (isPending || isApproved))
-                );
-
-                bookingItem.innerHTML = `
-                    <div class="booking-header">
-                        <div>
-                            <strong>${booking.bookerName}</strong> - ${getCarName(booking.carId)} (${formatThaiDate(new Date(booking.startDate))} - ${formatThaiDate(new Date(booking.endDate))})
-                            <span class="status-badge status-${booking.status || 'pending'}">${getStatusText(booking.status || 'pending')}</span>
-                        </div>
-                        <div class="booking-actions">
-                            ${isAdmin && isPending ? `<button class="btn btn-sm btn-approve" onclick="approveBooking('${booking.id}')">อนุมัติ</button>` : ''}
-                            ${isAdmin && isPending ? `<button class="btn btn-sm btn-reject" onclick="rejectBooking('${booking.id}')">ปฏิเสธ</button>` : ''}
-                            ${canEdit ? `<button class="btn btn-sm btn-primary" onclick="showEditBookingModal('${booking.id}')">แก้ไข</button>` : ''}
-                            ${canCancel ? `<button class="btn btn-sm btn-danger" onclick="cancelBooking('${booking.id}')">ยกเลิก</button>` : ''}
-                        </div>
-                    </div>
-                    <div class="booking-details">
-                        <div>เวลา: ${booking.startTime} - ${booking.endTime}</div>
-                        <div>จุดหมาย: ${booking.destination}</div>
-                        <div>วัตถุประสงค์: ${getPurposeText(booking.purpose)}</div>
-                        ${booking.notes ? `<div>หมายเหตุ: ${booking.notes}</div>` : ''}
-                    </div>
-                `;
-                bookingsList.appendChild(bookingItem);
-            });
+    // เพิ่ม event listeners สำหรับ sync วันที่ (เฉพาะใน modal นี้)
+    const handleDateChange = function() {
+        if (new Date(endDateInput.value) < new Date(startDateInput.value)) {
+            endDateInput.value = startDateInput.value;
         }
+        endDateInput.min = startDateInput.value;
+    };
 
-        viewBookingsModal.classList.add('active');
-    }
-
-    function showMyBookingsModal() {
-        if (!isAuthenticatedUser) {
-            showLoginModal();
-            return;
+    const handleEndDateChange = function() {
+        if (new Date(endDateInput.value) < new Date(startDateInput.value)) {
+            endDateInput.value = startDateInput.value;
         }
+    };
 
-        const myBookings = bookings.filter(booking => booking.userId === currentUser.uid)
-            .sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+    startDateInput.addEventListener('change', handleDateChange);
+    endDateInput.addEventListener('change', handleEndDateChange);
 
-        myBookingsList.innerHTML = '';
+    // ลบ listeners หลังปิด modal
+    const removeListeners = () => {
+        startDateInput.removeEventListener('change', handleDateChange);
+        endDateInput.removeEventListener('change', handleEndDateChange);
+    };
 
-        if (myBookings.length === 0) {
-            myBookingsList.innerHTML = '<p>คุณยังไม่มีรายการจองรถ</p>';
-        } else {
-            myBookings.forEach(booking => {
-                const bookingItem = document.createElement('div');
-                bookingItem.className = `booking-item ${booking.status || 'pending'}`;
-
-                const isPastDate = new Date(booking.startDate) < new Date(formatDate(new Date()));
-                const isPending = booking.status === 'pending';
-                const isApproved = booking.status === 'approved';
-                
-                // ปรับเงื่อนไข: ต้อง authenticated ก่อน
-                const canEdit = isAuthenticatedUser && !isPastDate && (
-                    (currentUser.role === 'admin' && (isPending || isApproved)) ||
-                    (isPending)
-                );
-                
-                const canCancel = isAuthenticatedUser && !isPastDate && (
-                    (currentUser.role === 'admin') || 
-                    (isPending || isApproved)
-                );
-
-                bookingItem.innerHTML = `
-                    <div class="booking-header">
-                        <div>
-                            <strong>${formatThaiDate(new Date(booking.startDate))} - ${formatThaiDate(new Date(booking.endDate))}</strong> - ${getCarName(booking.carId)}
-                            <span class="status-badge status-${booking.status || 'pending'}">${getStatusText(booking.status || 'pending')}</span>
-                        </div>
-                        <div class="booking-actions">
-                            ${canEdit ? `<button class="btn btn-sm btn-primary" onclick="showEditBookingModal('${booking.id}')">แก้ไข</button>` : ''}
-                            ${canCancel ? `<button class="btn btn-sm btn-danger" onclick="cancelBooking('${booking.id}')">ยกเลิก</button>` : ''}
-                        </div>
-                    </div>
-                    <div class="booking-details">
-                        <div>เวลา: ${booking.startTime} - ${booking.endTime}</div>
-                        <div>จุดหมาย: ${booking.destination}</div>
-                        <div>วัตถุประสงค์: ${getPurposeText(booking.purpose)}</div>
-                        ${booking.notes ? `<div>หมายเหตุ: ${booking.notes}</div>` : ''}
-                    </div>
-                `;
-                myBookingsList.appendChild(bookingItem);
-            });
+    // เรียกหลังปิด modal
+    bookingModal.addEventListener('click', function closeHandler(e) {
+        if (!bookingModal.contains(e.target) || e.target.classList.contains('close-modal')) {
+            removeListeners();
+            bookingModal.removeEventListener('click', closeHandler);
         }
+    });
+    
+    bookingModal.classList.add('active');
+}
 
-        myBookingsModal.classList.add('active');
-    }
 
-    function updateMyTodayBookings() {
-        if (!isAuthenticatedUser) {
-            myTodayBookings.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 20px;">เข้าสู่ระบบเพื่อดูการจองของคุณ</p>';
-            return;
-        }
+function showViewBookingsModal(selectedDay) {
+    const dateStr = formatDate(selectedDay);
+    const dayBookings = bookings.filter(booking =>
+        booking.startDate <= dateStr && booking.endDate >= dateStr
+    ).sort((a, b) => new Date(b.startDate + 'T' + b.startTime) - new Date(a.startDate + 'T' + a.startTime));
 
-        const today = formatDate(new Date());
-        const myTodayBookingsList = bookings.filter(booking =>
-            booking.userId === currentUser.uid &&
-            booking.startDate <= today && booking.endDate >= today
-        ).sort((a, b) => new Date(b.startDate + 'T' + b.startTime) - new Date(a.startDate + 'T' + a.startTime));
+    viewBookingsDate.textContent = `วันที่: ${formatThaiDate(selectedDay)} (การจองที่ครอบคลุมวันนี้)`;
+    bookingsList.innerHTML = '';
 
-        const pendingBookingsList = currentUser.role === 'admin' ? 
-            bookings.filter(booking => booking.status === 'pending')
-                .sort((a, b) => new Date(a.startDate + 'T' + a.startTime) - new Date(b.startDate + 'T' + b.startTime)) : [];
+    if (dayBookings.length === 0) {
+        bookingsList.innerHTML = '<p>ไม่มีข้อมูลการจองในวันนี้</p>';
+    } else {
+        dayBookings.forEach(booking => {
+            const bookingItem = document.createElement('div');
+            bookingItem.className = `booking-item ${booking.status || 'pending'}`;
 
-        myTodayBookings.innerHTML = '';
+            const isAdmin = currentUser.role === 'admin';
+            const isOwner = booking.userId === currentUser.uid;
+            const isPending = booking.status === 'pending';
+            const isApproved = booking.status === 'approved';
+            const isPastDate = new Date(booking.startDate) < new Date(formatDate(new Date()));
+            
+            // แก้ไขเงื่อนไข: แอดมินสามารถแก้ไขการจองที่รออนุมัติหรืออนุมัติแล้วได้
+            const canEdit = !isPastDate && (
+                (isAdmin && (isPending || isApproved)) || // แอดมินแก้ไขได้ทั้งที่รออนุมัติและอนุมัติแล้ว
+                (isOwner && isPending) // ผู้ใช้แก้ไขได้เฉพาะที่รออนุมัติ
+            );
+            
+            const canCancel = !isPastDate && (
+                (isAdmin) || 
+                (isOwner && (isPending || isApproved))
+            );
 
-        // สำหรับแอดมิน: แสดงรายการที่รออนุมัติ
-        if (currentUser.role === 'admin' && pendingBookingsList.length > 0) {
-            const pendingSection = document.createElement('div');
-            pendingSection.innerHTML = `
-                <h4 style="margin: 16px 0 8px 0; color: var(--warning); display: flex; align-items: center; gap: 6px;">
-                    <i class="fas fa-clock"></i>
-                    รายการจองที่รออนุมัติ
-                </h4>
-            `;
-            myTodayBookings.appendChild(pendingSection);
-
-            pendingBookingsList.forEach(booking => {
-                const bookingItem = document.createElement('div');
-                bookingItem.className = 'my-booking-item pending';
-                
-                const isPastDate = new Date(booking.startDate) < new Date(formatDate(new Date()));
-                const canEdit = isAuthenticatedUser && !isPastDate && currentUser.role === 'admin'; // แอดมินแก้ไขได้
-
-                bookingItem.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
-                        <div>
-                            <div style="font-weight: 600; margin-bottom: 4px;">${getCarName(booking.carId)} - ${booking.bookerName}</div>
-                            <div style="font-size: 0.8rem; color: var(--gray);">${formatThaiDate(new Date(booking.startDate))} - ${formatThaiDate(new Date(booking.endDate))} | ${booking.startTime} - ${booking.endTime}</div>
-                        </div>
-                        <span class="status-badge status-pending">รออนุมัติ</span>
-                    </div>
-                    <div style="font-size: 0.8rem; color: var(--dark); margin-bottom: 8px;">
-                        <div>${getPurposeText(booking.purpose)} • ${booking.destination}</div>
-                    </div>
-                    <div class="booking-actions" style="display: flex; gap: 6px; justify-content: flex-end;">
-                        ${canEdit ? `<button class="btn btn-sm btn-primary" onclick="showEditBookingModal('${booking.id}')">แก้ไข</button>` : ''}
-                        <button class="btn btn-sm btn-approve" onclick="approveBooking('${booking.id}')">อนุมัติ</button>
-                        <button class="btn btn-sm btn-reject" onclick="rejectBooking('${booking.id}')">ปฏิเสธ</button>
-                    </div>
-                `;
-                myTodayBookings.appendChild(bookingItem);
-            });
-        }
-
-        // แสดงรายการจองของตัวเองวันนี้
-        if (myTodayBookingsList.length === 0) {
-            if (currentUser.role !== 'admin' || pendingBookingsList.length === 0) {
-                myTodayBookings.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 20px;">ไม่มีรายการจองรถวันนี้</p>';
-            }
-        } else {
-            const mySection = document.createElement('div');
-            mySection.innerHTML = `
-                <h4 style="margin: ${currentUser.role === 'admin' && pendingBookingsList.length > 0 ? '16px 0 8px 0' : '0 0 8px 0'}; color: var(--primary); display: flex; align-items: center; gap: 6px;">
-                    <i class="fas fa-user"></i>
-                    การจองของฉันวันนี้
-                </h4>
-            `;
-            myTodayBookings.appendChild(mySection);
-
-            myTodayBookingsList.forEach(booking => {
-                const bookingItem = document.createElement('div');
-                bookingItem.className = `my-booking-item ${booking.status || 'pending'}`;
-                
-                const isPastDate = new Date(booking.startDate) < new Date(formatDate(new Date()));
-                const isPending = booking.status === 'pending';
-                const isApproved = booking.status === 'approved';
-                
-                // ปรับเงื่อนไข: ต้อง authenticated ก่อน
-                const canEdit = isAuthenticatedUser && !isPastDate && (
-                    (currentUser.role === 'admin' && (isPending || isApproved)) ||
-                    (isPending)
-                );
-                
-                const canCancel = isAuthenticatedUser && !isPastDate && (
-                    (currentUser.role === 'admin') || 
-                    (isPending || isApproved)
-                );
-
-                bookingItem.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
-                        <div>
-                            <div style="font-weight: 600; margin-bottom: 4px;">${getCarName(booking.carId)}</div>
-                            <div style="font-size: 0.8rem; color: var(--gray);">${formatThaiDate(new Date(booking.startDate))} - ${formatThaiDate(new Date(booking.endDate))} | ${booking.startTime} - ${booking.endTime}</div>
-                        </div>
+            bookingItem.innerHTML = `
+                <div class="booking-header">
+                    <div>
+                        <strong>${booking.bookerName}</strong> - ${getCarName(booking.carId)} (${formatThaiDate(new Date(booking.startDate))} - ${formatThaiDate(new Date(booking.endDate))})
                         <span class="status-badge status-${booking.status || 'pending'}">${getStatusText(booking.status || 'pending')}</span>
                     </div>
-                    <div style="font-size: 0.8rem; color: var(--dark); margin-bottom: ${canEdit || canCancel ? '8px' : '0'};">
-                        <div>${getPurposeText(booking.purpose)} • ${booking.destination}</div>
-                    </div>
-                    ${(canEdit || canCancel) ? `
-                    <div class="booking-actions" style="display: flex; gap: 6px; justify-content: flex-end;">
+                    <div class="booking-actions">
+                        ${isAdmin && isPending ? `<button class="btn btn-sm btn-approve" onclick="approveBooking('${booking.id}')">อนุมัติ</button>` : ''}
+                        ${isAdmin && isPending ? `<button class="btn btn-sm btn-reject" onclick="rejectBooking('${booking.id}')">ปฏิเสธ</button>` : ''}
                         ${canEdit ? `<button class="btn btn-sm btn-primary" onclick="showEditBookingModal('${booking.id}')">แก้ไข</button>` : ''}
                         ${canCancel ? `<button class="btn btn-sm btn-danger" onclick="cancelBooking('${booking.id}')">ยกเลิก</button>` : ''}
                     </div>
-                    ` : ''}
-                `;
-                myTodayBookings.appendChild(bookingItem);
-            });
-        }
+                </div>
+                <div class="booking-details">
+                    <div>เวลา: ${booking.startTime} - ${booking.endTime}</div>
+                    <div>จุดหมาย: ${booking.destination}</div>
+                    <div>วัตถุประสงค์: ${getPurposeText(booking.purpose)}</div>
+                    ${booking.notes ? `<div>หมายเหตุ: ${booking.notes}</div>` : ''}
+                </div>
+            `;
+            bookingsList.appendChild(bookingItem);
+        });
     }
 
-    function showEditBookingModal(bookingId) {
-        if (!isAuthenticatedUser) {
-            showLoginModal();
-            return;
-        }
+    viewBookingsModal.classList.add('active');
+}
 
-        const booking = bookings.find(b => b.id === bookingId);
-        if (booking) {
-            // ปิดหน้าต่างที่เปิดอยู่ทั้งหมด
-            viewBookingsModal.classList.remove('active');
-            myBookingsModal.classList.remove('active');
-            
-            // แสดงฟอร์มแก้ไขการจอง
-            showBookingModal(null, booking);
-        }
-    }
+
 
     function editBooking(bookingId) {
         const booking = bookings.find(b => b.id === bookingId);
@@ -2210,111 +1950,177 @@
             });
     }
 
-    function cancelBooking(bookingId) {
-        if (!isAuthenticatedUser) {
-            showSweetAlert('ต้องเข้าสู่ระบบก่อน', 'warning');
-            return;
-        }
+function showMyBookingsModal() {
+    const myBookings = bookings.filter(booking => booking.userId === currentUser.uid)
+        .sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
 
-        const booking = bookings.find(b => b.id === bookingId);
+    myBookingsList.innerHTML = '';
 
-        if (!booking) return;
+    if (myBookings.length === 0) {
+        myBookingsList.innerHTML = '<p>คุณยังไม่มีรายการจองรถ</p>';
+    } else {
+        myBookings.forEach(booking => {
+            const bookingItem = document.createElement('div');
+            bookingItem.className = `booking-item ${booking.status || 'pending'}`;
 
-        const isAdmin = currentUser.role === 'admin';
-        const isOwner = booking.userId === currentUser.uid;
-        const isPastDate = new Date(booking.startDate) < new Date(formatDate(new Date()));
+            const isPastDate = new Date(booking.startDate) < new Date(formatDate(new Date()));
+            const isPending = booking.status === 'pending';
+            const isApproved = booking.status === 'approved';
+            
+            // แก้ไขเงื่อนไข: แอดมินสามารถแก้ไขการจองที่รออนุมัติหรืออนุมัติแล้วได้
+            const canEdit = !isPastDate && (
+                (currentUser.role === 'admin' && (isPending || isApproved)) || // แอดมินแก้ไขได้ทั้งที่รออนุมัติและอนุมัติแล้ว
+                (isPending) // ผู้ใช้แก้ไขได้เฉพาะที่รออนุมัติ
+            );
+            
+            const canCancel = !isPastDate && (
+                (currentUser.role === 'admin') || 
+                (isPending || isApproved)
+            );
 
-        if (!isAdmin && !isOwner) {
-            showSweetAlert('คุณไม่มีสิทธิ์ยกเลิกการจองนี้', 'error');
-            return;
-        }
-
-        if (!isAdmin && isPastDate) {
-            showSweetAlert('ไม่สามารถยกเลิกการจองย้อนหลังได้', 'error');
-            return;
-        }
-
-        Swal.fire({
-            title: 'คุณแน่ใจหรือไม่?',
-            text: "คุณต้องการยกเลิกการจองนี้หรือไม่?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'ใช่, ยกเลิก!',
-            cancelButtonText: 'ไม่, ยกเลิกการกระทำ'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                database.ref('bookings/' + bookingId).remove()
-                    .then(() => {
-                        // ปิดหน้าต่างทั้งหมด
-                        viewBookingsModal.classList.remove('active');
-                        myBookingsModal.classList.remove('active');
-                        showSweetAlert('ยกเลิกการจองสำเร็จ', 'success');
-                        updateMyTodayBookings(); // อัพเดตรายการทันที
-                    })
-                    .catch((error) => {
-                        showSweetAlert('เกิดข้อผิดพลาดในการยกเลิก: ' + error.message, 'error');
-                    });
-            }
+            bookingItem.innerHTML = `
+                <div class="booking-header">
+                    <div>
+                        <strong>${formatThaiDate(new Date(booking.startDate))} - ${formatThaiDate(new Date(booking.endDate))}</strong> - ${getCarName(booking.carId)}
+                        <span class="status-badge status-${booking.status || 'pending'}">${getStatusText(booking.status || 'pending')}</span>
+                    </div>
+                    <div class="booking-actions">
+                        ${canEdit ? `<button class="btn btn-sm btn-primary" onclick="showEditBookingModal('${booking.id}')">แก้ไข</button>` : ''}
+                        ${canCancel ? `<button class="btn btn-sm btn-danger" onclick="cancelBooking('${booking.id}')">ยกเลิก</button>` : ''}
+                    </div>
+                </div>
+                <div class="booking-details">
+                    <div>เวลา: ${booking.startTime} - ${booking.endTime}</div>
+                    <div>จุดหมาย: ${booking.destination}</div>
+                    <div>วัตถุประสงค์: ${getPurposeText(booking.purpose)}</div>
+                    ${booking.notes ? `<div>หมายเหตุ: ${booking.notes}</div>` : ''}
+                </div>
+            `;
+            myBookingsList.appendChild(bookingItem);
         });
     }
 
-    function handleLogin(e) {
-        e.preventDefault();
+    myBookingsModal.classList.add('active');
+}
 
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
 
-        auth.signInWithEmailAndPassword(email, password)
-            .then((userCredential) => {
-                currentUser = userCredential.user;
-                return database.ref('users/' + currentUser.uid).once('value');
-            })
-            .then((snapshot) => {
-                const userData = snapshot.val();
-                console.log('Login fetched user data:', userData); // Debug log (ลบได้)
-                if (userData) {
-                    currentUser.displayName = userData.displayName || currentUser.email.split('@')[0];
-                    currentUser.role = userData.role || 'user';
-                    currentUser.department = userData.department || 'ไม่ระบุ'; // ยืนยัน set department
-                } else {
-                    // ถ้าไม่มีข้อมูลผู้ใช้ในฐานข้อมูล ให้สร้างข้อมูลใหม่
-                    const username = currentUser.email.split('@')[0];
-                    const displayName = username.charAt(0).toUpperCase() + username.slice(1) + ' User';
-                    
-                    return database.ref('users/' + currentUser.uid).set({
-                        displayName: displayName,
-                        department: 'ไม่ระบุ',
-                        role: 'user',
-                        email: currentUser.email,
-                        createdAt: firebase.database.ServerValue.TIMESTAMP
-                    }).then(() => {
-                        currentUser.displayName = displayName;
-                        currentUser.role = 'user';
-                        currentUser.department = 'ไม่ระบุ';
-                    });
-                }
-            })
-            .then(() => {
-                isAuthenticatedUser = true;
-                loginModal.classList.remove('active');
-                showMainApp();
-                updateUIVisibility();
-                showSweetAlert('เข้าสู่ระบบสำเร็จ', 'success');
-            })
-            .catch((error) => {
-                let errorMessage = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
-                if (error.code === 'auth/user-not-found') {
-                    errorMessage = 'ไม่พบบัญชีผู้ใช้';
-                } else if (error.code === 'auth/wrong-password') {
-                    errorMessage = 'รหัสผ่านไม่ถูกต้อง';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = 'รูปแบบอีเมลไม่ถูกต้อง';
-                }
-                showSweetAlert(errorMessage, 'error');
-            });
+
+
+    function editCar(carId) {
+        const car = cars.find(c => c.id === carId);
+        if (car) {
+            showCarFormModal(car);
+        } else {
+            showSweetAlert('ไม่พบข้อมูลรถ', 'error');
+        }
     }
+
+    function editUser(uid) {
+        const user = users.find(u => u.uid === uid);
+        if (user) {
+            showUserFormModal(user);
+        } else {
+            showSweetAlert('ไม่พบข้อมูลผู้ใช้', 'error');
+        }
+    }
+
+    function showCarFormModal(car = null) {
+        resetCarForm();
+        if (car) {
+            document.getElementById('carFormTitle').textContent = 'แก้ไขรถ';
+            document.getElementById('carId').value = car.id;
+            document.getElementById('carBrand').value = car.brand || '';
+            document.getElementById('carColor').value = car.color || '';
+            document.getElementById('carFuelType').value = car.fuelType || 'gasoline';
+            document.getElementById('carImageUrl').value = car.imageUrl || '';
+            document.getElementById('carLastMaintenance').value = car.lastMaintenance ? new Date(car.lastMaintenance).toISOString().split('T')[0] : '';
+        } else {
+            document.getElementById('carFormTitle').textContent = 'เพิ่มรถใหม่';
+            document.getElementById('carId').value = '';
+        }
+        carFormModal.classList.add('active');
+    }
+
+    function showUserFormModal(user = null) {
+        resetUserForm();
+        document.getElementById('userPasswordGroup').style.display = user ? 'none' : 'block';
+        if (user) {
+            document.getElementById('userFormTitle').textContent = 'แก้ไขผู้ใช้';
+            document.getElementById('userUid').value = user.uid;
+            document.getElementById('userEmail').value = user.email || '';
+            document.getElementById('userDisplayName').value = user.displayName || '';
+            document.getElementById('userDepartment').value = user.department || '';
+            document.getElementById('userRole').value = user.role || 'user';
+        } else {
+            document.getElementById('userFormTitle').textContent = 'เพิ่มผู้ใช้ใหม่';
+            document.getElementById('userUid').value = '';
+        }
+        userFormModal.classList.add('active');
+    }
+
+function handleLogin(e) {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            currentUser = userCredential.user;
+            return database.ref('users/' + currentUser.uid).once('value');
+        })
+        .then((snapshot) => {
+            const userData = snapshot.val();
+            console.log('Login fetched user data:', userData); // Debug log (ลบได้)
+            if (userData) {
+                currentUser.displayName = userData.displayName || currentUser.email.split('@')[0];
+                currentUser.role = userData.role || 'user';
+                currentUser.department = userData.department || 'ไม่ระบุ'; // ยืนยัน set department
+            } else {
+                // ถ้าไม่มีข้อมูลผู้ใช้ในฐานข้อมูล ให้สร้างข้อมูลใหม่
+                const username = currentUser.email.split('@')[0];
+                const displayName = username.charAt(0).toUpperCase() + username.slice(1) + ' User';
+                
+                return database.ref('users/' + currentUser.uid).set({
+                    displayName: displayName,
+                    department: 'ไม่ระบุ',
+                    role: 'user',
+                    email: currentUser.email,
+                    createdAt: firebase.database.ServerValue.TIMESTAMP
+                }).then(() => {
+                    currentUser.displayName = displayName;
+                    currentUser.role = 'user';
+                    currentUser.department = 'ไม่ระบุ';
+                });
+            }
+        })
+        .then(() => {
+            loginModal.classList.remove('active');
+            showMainApp();
+            showSweetAlert('เข้าสู่ระบบสำเร็จ', 'success');
+        })
+        .catch((error) => {
+            let errorMessage = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+            if (error.code === 'auth/user-not-found') {
+                errorMessage = 'ไม่พบบัญชีผู้ใช้';
+            } else if (error.code === 'auth/wrong-password') {
+                errorMessage = 'รหัสผ่านไม่ถูกต้อง';
+            } else if (error.code === 'auth/invalid-email') {
+                errorMessage = 'รูปแบบอีเมลไม่ถูกต้อง';
+            }
+            showSweetAlert(errorMessage, 'error');
+        });
+}
+
+
+
+
+
+
+
+
+
+
 
     function handleBooking(e) {
         e.preventDefault();
@@ -2449,6 +2255,51 @@
             });
     }
 
+    function cancelBooking(bookingId) {
+        const booking = bookings.find(b => b.id === bookingId);
+
+        if (!booking) return;
+
+        const isAdmin = currentUser.role === 'admin';
+        const isOwner = booking.userId === currentUser.uid;
+        const isPastDate = new Date(booking.startDate) < new Date(formatDate(new Date()));
+
+        if (!isAdmin && !isOwner) {
+            showSweetAlert('คุณไม่มีสิทธิ์ยกเลิกการจองนี้', 'error');
+            return;
+        }
+
+        if (!isAdmin && isPastDate) {
+            showSweetAlert('ไม่สามารถยกเลิกการจองย้อนหลังได้', 'error');
+            return;
+        }
+
+        Swal.fire({
+            title: 'คุณแน่ใจหรือไม่?',
+            text: "คุณต้องการยกเลิกการจองนี้หรือไม่?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'ใช่, ยกเลิก!',
+            cancelButtonText: 'ไม่, ยกเลิกการกระทำ'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                database.ref('bookings/' + bookingId).remove()
+                    .then(() => {
+                        // ปิดหน้าต่างทั้งหมด
+                        viewBookingsModal.classList.remove('active');
+                        myBookingsModal.classList.remove('active');
+                        showSweetAlert('ยกเลิกการจองสำเร็จ', 'success');
+                        updateMyTodayBookings(); // อัพเดตรายการทันที
+                    })
+                    .catch((error) => {
+                        showSweetAlert('เกิดข้อผิดพลาดในการยกเลิก: ' + error.message, 'error');
+                    });
+            }
+        });
+    }
+
     function handleCarForm(e) {
         e.preventDefault();
         const carId = document.getElementById('carId').value;
@@ -2532,58 +2383,6 @@
         }
     }
 
-    function editCar(carId) {
-        const car = cars.find(c => c.id === carId);
-        if (car) {
-            showCarFormModal(car);
-        } else {
-            showSweetAlert('ไม่พบข้อมูลรถ', 'error');
-        }
-    }
-
-    function editUser(uid) {
-        const user = users.find(u => u.uid === uid);
-        if (user) {
-            showUserFormModal(user);
-        } else {
-            showSweetAlert('ไม่พบข้อมูลผู้ใช้', 'error');
-        }
-    }
-
-    function showCarFormModal(car = null) {
-        resetCarForm();
-        if (car) {
-            document.getElementById('carFormTitle').textContent = 'แก้ไขรถ';
-            document.getElementById('carId').value = car.id;
-            document.getElementById('carBrand').value = car.brand || '';
-            document.getElementById('carColor').value = car.color || '';
-            document.getElementById('carFuelType').value = car.fuelType || 'gasoline';
-            document.getElementById('carImageUrl').value = car.imageUrl || '';
-            document.getElementById('carLastMaintenance').value = car.lastMaintenance ? new Date(car.lastMaintenance).toISOString().split('T')[0] : '';
-        } else {
-            document.getElementById('carFormTitle').textContent = 'เพิ่มรถใหม่';
-            document.getElementById('carId').value = '';
-        }
-        carFormModal.classList.add('active');
-    }
-
-    function showUserFormModal(user = null) {
-        resetUserForm();
-        document.getElementById('userPasswordGroup').style.display = user ? 'none' : 'block';
-        if (user) {
-            document.getElementById('userFormTitle').textContent = 'แก้ไขผู้ใช้';
-            document.getElementById('userUid').value = user.uid;
-            document.getElementById('userEmail').value = user.email || '';
-            document.getElementById('userDisplayName').value = user.displayName || '';
-            document.getElementById('userDepartment').value = user.department || '';
-            document.getElementById('userRole').value = user.role || 'user';
-        } else {
-            document.getElementById('userFormTitle').textContent = 'เพิ่มผู้ใช้ใหม่';
-            document.getElementById('userUid').value = '';
-        }
-        userFormModal.classList.add('active');
-    }
-
     function deleteCar(carId) {
         Swal.fire({
             title: 'คุณแน่ใจหรือไม่?',
@@ -2635,12 +2434,6 @@
     }
 
     function loadCars() {
-        // Load เฉพาะเมื่อมี currentUser เพื่อหลีกเลี่ยง permission error
-        if (!currentUser) {
-            cars = [];
-            updateCarSelect();
-            return;
-        }
         database.ref('cars').on('value', (snapshot) => {
             const carsData = snapshot.val();
             if (carsData) {
@@ -2656,8 +2449,6 @@
     }
 
     function loadUsers() {
-        // Load เฉพาะ admin
-        if (!currentUser || currentUser.role !== 'admin') return;
         database.ref('users').on('value', (snapshot) => {
             const usersData = snapshot.val();
             if (usersData) {
@@ -2675,11 +2466,6 @@
     }
 
     function loadBookings() {
-        // Load เฉพาะเมื่อมี currentUser เพื่อหลีกเลี่ยง permission error
-        if (!currentUser) {
-            bookings = [];
-            return;
-        }
         database.ref('bookings').on('value', (snapshot) => {
             const bookingsData = snapshot.val();
             if (bookingsData) {
@@ -2777,13 +2563,12 @@
             if (result.isConfirmed) {
                 auth.signOut()
                     .then(() => {
-                        isAuthenticatedUser = false;
                         currentUser = null;
                         showLoginModal();
                         mainContent.style.display = 'none';
+                        document.body.classList.add('loading');
                         loadingIndicator.style.display = 'flex';
                         document.querySelectorAll('.container').forEach(c => c.classList.remove('loaded'));
-                        updateUIVisibility();
                     })
                     .catch((error) => {
                         showSweetAlert('เกิดข้อผิดพลาดในการออกจากระบบ: ' + error.message, 'error');
@@ -2791,6 +2576,8 @@
             }
         });
     }
+
+
 
     function loadCalendar() {
         const year = currentDate.getFullYear();
@@ -2887,6 +2674,116 @@
         }
     }
 
+function updateMyTodayBookings() {
+    const today = formatDate(new Date());
+    const myTodayBookingsList = bookings.filter(booking =>
+        booking.userId === currentUser.uid &&
+        booking.startDate <= today && booking.endDate >= today
+    ).sort((a, b) => new Date(b.startDate + 'T' + b.startTime) - new Date(a.startDate + 'T' + a.startTime));
+
+    const pendingBookingsList = currentUser.role === 'admin' ? 
+        bookings.filter(booking => booking.status === 'pending')
+            .sort((a, b) => new Date(a.startDate + 'T' + a.startTime) - new Date(b.startDate + 'T' + b.startTime)) : [];
+
+    myTodayBookings.innerHTML = '';
+
+    // สำหรับแอดมิน: แสดงรายการที่รออนุมัติ
+    if (currentUser.role === 'admin' && pendingBookingsList.length > 0) {
+        const pendingSection = document.createElement('div');
+        pendingSection.innerHTML = `
+            <h4 style="margin: 16px 0 8px 0; color: var(--warning); display: flex; align-items: center; gap: 6px;">
+                <i class="fas fa-clock"></i>
+                รายการจองที่รออนุมัติ
+            </h4>
+        `;
+        myTodayBookings.appendChild(pendingSection);
+
+        pendingBookingsList.forEach(booking => {
+            const bookingItem = document.createElement('div');
+            bookingItem.className = 'my-booking-item pending';
+            
+            const isPastDate = new Date(booking.startDate) < new Date(formatDate(new Date()));
+            const canEdit = !isPastDate && currentUser.role === 'admin'; // แอดมินแก้ไขได้
+
+            bookingItem.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 4px;">${getCarName(booking.carId)} - ${booking.bookerName}</div>
+                        <div style="font-size: 0.8rem; color: var(--gray);">${formatThaiDate(new Date(booking.startDate))} - ${formatThaiDate(new Date(booking.endDate))} | ${booking.startTime} - ${booking.endTime}</div>
+                    </div>
+                    <span class="status-badge status-pending">รออนุมัติ</span>
+                </div>
+                <div style="font-size: 0.8rem; color: var(--dark); margin-bottom: 8px;">
+                    <div>${getPurposeText(booking.purpose)} • ${booking.destination}</div>
+                </div>
+                <div class="booking-actions" style="display: flex; gap: 6px; justify-content: flex-end;">
+                    ${canEdit ? `<button class="btn btn-sm btn-primary" onclick="showEditBookingModal('${booking.id}')">แก้ไข</button>` : ''}
+                    <button class="btn btn-sm btn-approve" onclick="approveBooking('${booking.id}')">อนุมัติ</button>
+                    <button class="btn btn-sm btn-reject" onclick="rejectBooking('${booking.id}')">ปฏิเสธ</button>
+                </div>
+            `;
+            myTodayBookings.appendChild(bookingItem);
+        });
+    }
+
+    // แสดงรายการจองของตัวเองวันนี้
+    if (myTodayBookingsList.length === 0) {
+        if (currentUser.role !== 'admin' || pendingBookingsList.length === 0) {
+            myTodayBookings.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 20px;">ไม่มีรายการจองรถวันนี้</p>';
+        }
+    } else {
+        const mySection = document.createElement('div');
+        mySection.innerHTML = `
+            <h4 style="margin: ${currentUser.role === 'admin' && pendingBookingsList.length > 0 ? '16px 0 8px 0' : '0 0 8px 0'}; color: var(--primary); display: flex; align-items: center; gap: 6px;">
+                <i class="fas fa-user"></i>
+                การจองของฉันวันนี้
+            </h4>
+        `;
+        myTodayBookings.appendChild(mySection);
+
+        myTodayBookingsList.forEach(booking => {
+            const bookingItem = document.createElement('div');
+            bookingItem.className = `my-booking-item ${booking.status || 'pending'}`;
+            
+            const isPastDate = new Date(booking.startDate) < new Date(formatDate(new Date()));
+            const isPending = booking.status === 'pending';
+            const isApproved = booking.status === 'approved';
+            
+            // แก้ไขเงื่อนไข: แอดมินสามารถแก้ไขการจองที่รออนุมัติหรืออนุมัติแล้วได้
+            const canEdit = !isPastDate && (
+                (currentUser.role === 'admin' && (isPending || isApproved)) || // แอดมินแก้ไขได้ทั้งที่รออนุมัติและอนุมัติแล้ว
+                (isPending) // ผู้ใช้แก้ไขได้เฉพาะที่รออนุมัติ
+            );
+            
+            const canCancel = !isPastDate && (
+                (currentUser.role === 'admin') || 
+                (isPending || isApproved)
+            );
+
+            bookingItem.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 4px;">${getCarName(booking.carId)}</div>
+                        <div style="font-size: 0.8rem; color: var(--gray);">${formatThaiDate(new Date(booking.startDate))} - ${formatThaiDate(new Date(booking.endDate))} | ${booking.startTime} - ${booking.endTime}</div>
+                    </div>
+                    <span class="status-badge status-${booking.status || 'pending'}">${getStatusText(booking.status || 'pending')}</span>
+                </div>
+                <div style="font-size: 0.8rem; color: var(--dark); margin-bottom: ${canEdit || canCancel ? '8px' : '0'};">
+                    <div>${getPurposeText(booking.purpose)} • ${booking.destination}</div>
+                </div>
+                ${(canEdit || canCancel) ? `
+                <div class="booking-actions" style="display: flex; gap: 6px; justify-content: flex-end;">
+                    ${canEdit ? `<button class="btn btn-sm btn-primary" onclick="showEditBookingModal('${booking.id}')">แก้ไข</button>` : ''}
+                    ${canCancel ? `<button class="btn btn-sm btn-danger" onclick="cancelBooking('${booking.id}')">ยกเลิก</button>` : ''}
+                </div>
+                ` : ''}
+            `;
+            myTodayBookings.appendChild(bookingItem);
+        });
+    }
+}
+
+
     function updateCarSelect() {
         carSelect.innerHTML = '<option value="">-- เลือกรถ --</option>';
         cars.forEach(car => {
@@ -2973,7 +2870,24 @@
         return purposeMap[purpose] || purpose;
     }
 
+
+function showEditBookingModal(bookingId) {
+    const booking = bookings.find(b => b.id === bookingId);
+    if (booking) {
+        // ปิดหน้าต่างที่เปิดอยู่ทั้งหมด
+        viewBookingsModal.classList.remove('active');
+        myBookingsModal.classList.remove('active');
+        
+        // แสดงฟอร์มแก้ไขการจอง
+        showBookingModal(null, booking);
+    }
+}
     document.addEventListener('DOMContentLoaded', initApp);
+
+
+
 </script>
 </body>
 </html>
+
+
