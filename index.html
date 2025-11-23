@@ -63,9 +63,9 @@
         header {
             background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
             color: white;
-            padding: 12px 0;
+            padding: 2px 0;
+            margin-bottom: 10px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
             backdrop-filter: blur(10px);
             position: sticky;
             top: 0;
@@ -77,6 +77,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 0 16px;
+            
         }
 
         .logo {
@@ -881,7 +882,10 @@
             .form-row {
                 grid-template-columns: 1fr;
             }
-
+            
+            #userName {
+            display: none;                 /* ซ่อนชื่อผู้ใช้ในมือถือ (เหลือแต่ avatar) */
+            }
             .calendar-header {
                 flex-direction: row;
                 gap: 10px;
@@ -1082,7 +1086,7 @@
                         <label class="form-label">วัตถุประสงค์</label>
                         <div>
                             <input type="radio" id="purposeNormal" name="purpose" value="normal" checked>
-                            <label for="purposeNormal">ปกติ</label>
+                            <label for="purposeNormal">ใช้งานรถ</label>
                             <input type="radio" id="purposeLeaveWork" name="purpose" value="leaveWork" style="margin-left: 15px;">
                             <label for="purposeLeaveWork">ฝากงาน</label>
                             <input type="radio" id="purposeCarToWork" name="purpose" value="carToWork" style="margin-left: 15px;">
@@ -1098,9 +1102,9 @@
                     <div class="form-group">
                         <label class="form-label">สถานะการขับ</label>
                         <div>
-                            <input type="radio" id="selfDrive" name="driverStatus" value="self" checked>
+                            <input type="radio" id="selfDrive" name="driverStatus" value="self" required>
                             <label for="selfDrive">ขับเอง</label>
-                            <input type="radio" id="withDriver" name="driverStatus" value="with" style="margin-left: 15px;">
+                            <input type="radio" id="withDriver" name="driverStatus" value="with" style="margin-left: 15px;" required>
                             <label for="withDriver">พร้อมคนขับ</label>
                         </div>
                     </div>
@@ -1342,7 +1346,7 @@
                                 <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
                             </div>
                             <h2 id="currentMonth">มกราคม 2023</h2>
-                            <button class="btn btn-primary" id="newBookingBtn">จองรถ</button>
+                            <button class="btn btn-primary" id="newBookingBtn" hidden>จองรถ</button>
                         </div>
                         <div class="calendar-weekdays">
                             <div>อาทิตย์</div>
@@ -1757,6 +1761,8 @@ function showBookingModal(selectedDay = null, bookingToEdit = null) {
         endDateInput.value = bookingToEdit.endDate;
         bookerNameInput.value = bookingToEdit.bookerName;
         departmentInput.value = bookingToEdit.department;
+
+        
         
         // ตั้งค่าวัตถุประสงค์
         document.querySelector(`input[name="purpose"][value="${bookingToEdit.purpose}"]`).checked = true;
@@ -1901,7 +1907,11 @@ function showViewBookingsModal(selectedDay) {
                 <div class="booking-details">
                     <div>เวลา: ${booking.startTime} - ${booking.endTime}</div>
                     <div>จุดหมาย: ${booking.destination}</div>
-                    <div>วัตถุประสงค์: ${getPurposeText(booking.purpose)}</div>
+                    <div style="font-size: 0.8rem; color: var(--dark);">
+                        วัตถุประสงค์: ${getPurposeText(booking.purpose)} 
+                        • 
+                        ${booking.driverStatus === 'self' ? 'ขับเอง' : 'พร้อมคนขับ'}
+                    </div>
                     ${booking.notes ? `<div>หมายเหตุ: ${booking.notes}</div>` : ''}
                 </div>
             `;
@@ -2049,11 +2059,23 @@ function showMyBookingsModal() {
         userFormModal.classList.add('active');
     }
 
-function handleLogin(e) {
+
+    function handleLogin(e) {
     e.preventDefault();
 
-    const email = document.getElementById('email').value;
+    const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
+
+    // แสดง loading ที่ค้างไว้ได้ (ไม่ปิดเอง)
+    const swalLoading = Swal.fire({
+        title: 'กำลังเข้าสู่ระบบ...',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
 
     auth.signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
@@ -2062,16 +2084,13 @@ function handleLogin(e) {
         })
         .then((snapshot) => {
             const userData = snapshot.val();
-            console.log('Login fetched user data:', userData); // Debug log (ลบได้)
             if (userData) {
                 currentUser.displayName = userData.displayName || currentUser.email.split('@')[0];
                 currentUser.role = userData.role || 'user';
-                currentUser.department = userData.department || 'ไม่ระบุ'; // ยืนยัน set department
+                currentUser.department = userData.department || 'ไม่ระบุ';
             } else {
-                // ถ้าไม่มีข้อมูลผู้ใช้ในฐานข้อมูล ให้สร้างข้อมูลใหม่
                 const username = currentUser.email.split('@')[0];
                 const displayName = username.charAt(0).toUpperCase() + username.slice(1) + ' User';
-                
                 return database.ref('users/' + currentUser.uid).set({
                     displayName: displayName,
                     department: 'ไม่ระบุ',
@@ -2086,26 +2105,22 @@ function handleLogin(e) {
             }
         })
         .then(() => {
+            swalLoading.close(); // ปิด loading
             loginModal.classList.remove('active');
             showMainApp();
             showSweetAlert('เข้าสู่ระบบสำเร็จ', 'success');
         })
         .catch((error) => {
+            swalLoading.close(); // ปิด loading แม้เกิด error
             let errorMessage = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
-            if (error.code === 'auth/user-not-found') {
-                errorMessage = 'ไม่พบบัญชีผู้ใช้';
-            } else if (error.code === 'auth/wrong-password') {
-                errorMessage = 'รหัสผ่านไม่ถูกต้อง';
-            } else if (error.code === 'auth/invalid-email') {
-                errorMessage = 'รูปแบบอีเมลไม่ถูกต้อง';
-            }
+            if (error.code === 'auth/user-not-found') errorMessage = 'ไม่พบบัญชีผู้ใช้';
+            else if (error.code === 'auth/wrong-password') errorMessage = 'รหัสผ่านไม่ถูกต้อง';
+            else if (error.code === 'auth/invalid-email') errorMessage = 'รูปแบบอีเมลไม่ถูกต้อง';
+            else if (error.code === 'auth/too-many-requests') errorMessage = 'พยายามมากเกินไป กรุณารอสักครู่';
+
             showSweetAlert(errorMessage, 'error');
         });
 }
-
-
-
-
 
 
 
@@ -2789,8 +2804,8 @@ function updateMyTodayBookings() {
         bookingForm.reset();
         bookingIdInput.value = '';
         adminControls.style.display = 'none';
-        document.getElementById('selfDrive').checked = true;
-        document.getElementById('purposeNormal').checked = true;
+        // document.getElementById('selfDrive').checked = true;
+        // document.getElementById('purposeNormal').checked = true;
         carSelectGroup.style.display = 'block';
         carSelect.setAttribute('required', 'required');
 
@@ -2854,7 +2869,7 @@ function updateMyTodayBookings() {
 
     function getPurposeText(purpose) {
         const purposeMap = {
-            'normal': 'ปกติ',
+            'normal': 'ใช้งานรถ',
             'leaveWork': 'ฝากงาน',
             'carToWork': 'ติดรถไปติดต่องาน'
         };
