@@ -1006,6 +1006,135 @@
                 display: inline-block !important;
             }
         }
+
+
+.mileage-section h4::before {
+    content: "📊";
+    font-size: 1.2em;
+}
+
+.mileage-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-mileage {
+    background: var(--warning);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-mileage:hover {
+    background: #e68900;
+    transform: scale(1.05);
+}
+
+.mileage-info {
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+
+
+
+
+
+
+/* สไตล์สำหรับปุ่มบันทึกไมล์ */
+.mileage-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-mileage {
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* สไตล์สำหรับข้อมูลไมล์ */
+.mileage-info {
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+/* สไตล์สำหรับฟิลด์อ่านอย่างเดียว */
+.form-control[readonly] {
+    background-color: #f8f9fa;
+    border-color: #e9ecef;
+    color: #6c757d;
+}
+
+.form-control[readonly]:focus {
+    box-shadow: none;
+    border-color: #e9ecef;
+}
+
+
+
+
+
+
+/* สไตล์สำหรับฟอร์มบันทึกไมล์ */
+.mileage-section {
+    background: rgba(255, 149, 0, 0.05);
+    padding: 16px;
+    border-radius: 10px;
+    margin: 16px 0;
+    border: 1px solid rgba(255, 149, 0, 0.2);
+}
+
+.mileage-section h4 {
+    color: var(--warning);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ซ่อนฟิลด์ที่ไม่จำเป็น */
+.form-group[style*="display: none"] {
+    display: none !important;
+}
+
+input[style*="display: none"], 
+select[style*="display: none"], 
+textarea[style*="display: none"] {
+    display: none !important;
+}
+
+/* สไตล์สำหรับข้อมูลการจอง */
+.booking-info-section {
+    background: rgba(0, 122, 255, 0.05);
+    padding: 16px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(0, 122, 255, 0.1);
+}
+
+.booking-info-section h4 {
+    color: var(--primary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
     </style>
 </head>
 <body class="loading">
@@ -1045,7 +1174,7 @@
                 <div style="margin-top: 20px; padding: 16px; background: var(--light); border-radius: 12px;">
                     <h4 style="margin-bottom: 12px; color: var(--dark);">บัญชีทดสอบ:</h4>
                
-                    <p style="margin-bottom: 8px; font-size: 0.9rem;"><strong>ผู้ใช้ทั่วไป:</strong> parweenar@email.com / 622001</p>
+                    <p style="margin-bottom: 8px; font-size: 0.9rem;"><strong>ผู้ใช้ทั่วไป:</strong> likit@bookcar.com / 123456</p>
                     <p style="font-size: 0.9rem;"><strong>ผู้ดูแลระบบ:</strong> adminbookcarcm2@email.com / adminbookcarcm2</p>
                 </div>
             </div>
@@ -1139,6 +1268,38 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- ใน bookingModal เพิ่มฟิลด์บันทึกไมล์และเวลา -->
+<div class="mileage-section" id="mileageSection" style="display: none;">
+    <h4 style="margin: 16px 0 12px 0; color: var(--primary);">บันทึกไมล์และเวลา</h4>
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label class="form-label" for="actualStartTime">เวลาออกจริง</label>
+            <input type="time" id="actualStartTime" class="form-control">
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="mileageOut">เลขไมล์ออก</label>
+            <input type="number" id="mileageOut" class="form-control" placeholder="กรอกเลขไมล์ออก" min="0">
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label class="form-label" for="actualEndTime">เวลาเข้าจริง</label>
+            <input type="time" id="actualEndTime" class="form-control">
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="mileageIn">เลขไมล์เข้า</label>
+            <input type="number" id="mileageIn" class="form-control" placeholder="กรอกเลขไมล์เข้า" min="0">
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="form-label" for="mileageNotes">หมายเหตุเพิ่มเติม</label>
+        <textarea id="mileageNotes" class="form-control" rows="2" placeholder="หมายเหตุเกี่ยวกับการใช้งานรถ"></textarea>
+    </div>
+</div>
                     <div class="form-actions">
                         <button type="button" class="btn btn-danger" id="cancelBooking">ยกเลิก</button>
                         <button type="submit" class="btn btn-primary" id="saveBooking" style="color: var(--light); background-color: var(--primary);" >บันทึกการจอง</button>
@@ -1415,17 +1576,19 @@
     </nav>
 
     <script>
-    // Firebase Configuration
+
+
+
     const firebaseConfig = {
-  apiKey: "AIzaSyAFZGvjTZDiimtyyauEaRY5UeajLlMVKEA",
-  authDomain: "dataequipment-8a4e5.firebaseapp.com",
-  databaseURL: "https://dataequipment-8a4e5-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "dataequipment-8a4e5",
-  storageBucket: "dataequipment-8a4e5.firebasestorage.app",
-  messagingSenderId: "1016960943788",
-  appId: "1:1016960943788:web:ed8837e802aaf9f5e3c109",
-  measurementId: "G-XDF8SSH478"
-    };
+  apiKey: "AIzaSyDuek-870g_xTYbfXZTg824eU4c4WyvFf4",
+  authDomain: "test-fe28a.firebaseapp.com",
+  databaseURL: "https://test-fe28a-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "test-fe28a",
+  storageBucket: "test-fe28a.firebasestorage.app",
+  messagingSenderId: "297402725045",
+  appId: "1:297402725045:web:e9832657e3df5795c684fc",
+  measurementId: "G-BJG2J0BF44"
+};
 
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
@@ -1878,7 +2041,7 @@ function showViewBookingsModal(selectedDay) {
             const isOwner = booking.userId === currentUser.uid;
             const isPending = booking.status === 'pending';
             const isApproved = booking.status === 'approved';
-            const isPastDate = new Date(booking.startDate) < new Date(formatDate(new Date()));
+            const isPastDate = new Date(booking.startDate) <= new Date(formatDate(new Date()));
             
             // แก้ไขเงื่อนไข: แอดมินสามารถแก้ไขการจองที่รออนุมัติหรืออนุมัติแล้วได้
             const canEdit = !isPastDate && (
@@ -1915,6 +2078,20 @@ function showViewBookingsModal(selectedDay) {
                     ${booking.notes ? `<div>หมายเหตุ: ${booking.notes}</div>` : ''}
                 </div>
             `;
+
+            // เพิ่มปุ่มบันทึกไมล์และข้อมูลไมล์
+            addMileageActionButtons(bookingItem, booking);
+            
+            // แสดงชื่อผู้อนุมัติ
+            if (booking.status === 'approved' && booking.approvedBy) {
+                const approverInfo = document.createElement('div');
+                approverInfo.style.fontSize = '0.8rem';
+                approverInfo.style.color = 'var(--secondary)';
+                approverInfo.style.marginTop = '5px';
+                approverInfo.innerHTML = `<i class="fas fa-user-check"></i> อนุมัติโดย: ${booking.approvedBy}`;
+                bookingItem.appendChild(approverInfo);
+            }
+
             bookingsList.appendChild(bookingItem);
         });
     }
@@ -1932,8 +2109,21 @@ function showViewBookingsModal(selectedDay) {
     }
 
     function approveBooking(bookingId) {
-        updateBookingStatus(bookingId, 'approved');
-    }
+    const approverName = currentUser.displayName || currentUser.email;
+    database.ref('bookings/' + bookingId).update({ 
+        status: 'approved',
+        approvedBy: approverName,
+        approvedAt: firebase.database.ServerValue.TIMESTAMP
+    })
+    .then(() => {
+        showSweetAlert('การจองถูกอนุมัติแล้ว', 'success');
+        viewBookingsModal.classList.remove('active');
+        updateMyTodayBookings();
+    })
+    .catch((error) => {
+        showSweetAlert('เกิดข้อผิดพลาด: ' + error.message, 'error');
+    });
+}
 
     function rejectBooking(bookingId) {
         updateBookingStatus(bookingId, 'rejected');
@@ -2128,109 +2318,118 @@ function showMyBookingsModal() {
 
 
 
-    function handleBooking(e) {
-        e.preventDefault();
+function handleBooking(e) {
+    e.preventDefault();
 
-        const purposeInput = document.querySelector('input[name="purpose"]:checked');
-        if (!purposeInput) {
-            showSweetAlert('กรุณาเลือกวัตถุประสงค์', 'error');
+    // ตรวจสอบว่ากำลังบันทึกไมล์หรือจองรถ
+    const isRecordingMileage = document.getElementById('mileageSection').style.display !== 'none';
+    
+    if (isRecordingMileage) {
+        handleMileageRecording();
+        return;
+    }
+
+    // โค้ดเดิมสำหรับการจองรถ (มี required อยู่)
+    const purposeInput = document.querySelector('input[name="purpose"]:checked');
+    if (!purposeInput) {
+        showSweetAlert('กรุณาเลือกวัตถุประสงค์', 'error');
+        return;
+    }
+    const purpose = purposeInput.value;
+
+    let carId = 'none';
+    if (purpose === 'normal') {
+        if (!carSelect || !carSelect.value) {
+            showSweetAlert('กรุณาเลือกรถยนต์', 'error');
             return;
         }
-        const purpose = purposeInput.value;
+        carId = carSelect.value;
+    }
 
-        let carId = 'none';
-        if (purpose === 'normal') {
-            if (!carSelect || !carSelect.value) {
-                showSweetAlert('กรุณาเลือกรถยนต์', 'error');
-                return;
+    if (!startDateInput || !startDateInput.value) {
+        showSweetAlert('กรุณาเลือกวันที่ออก', 'error');
+        return;
+    }
+
+    const startDate = startDateInput.value;
+    const endDate = endDateInput.value;
+    const today = formatDate(new Date());
+    if (new Date(startDate) < new Date(today)) {
+        showSweetAlert('ไม่สามารถจองย้อนหลังได้', 'error');
+        return;
+    }
+
+    if (new Date(endDate) < new Date(startDate)) {
+        showSweetAlert('วันที่เข้าต้องไม่ก่อนวันที่ออก', 'error');
+        return;
+    }
+
+    if (!document.getElementById('startTime') || !document.getElementById('startTime').value) {
+        showSweetAlert('กรุณาเลือกเวลาเริ่มต้น', 'error');
+        return;
+    }
+
+    if (!document.getElementById('endTime') || !document.getElementById('endTime').value) {
+        showSweetAlert('กรุณาเลือกเวลาสิ้นสุด', 'error');
+        return;
+    }
+
+    const startTime = document.getElementById('startTime').value;
+    const endTime = document.getElementById('endTime').value;
+    const bookingId = bookingIdInput.value || '';
+
+    if (purpose === 'normal') {
+        // เช็ค conflict สำหรับทุกวันระหว่าง startDate และ endDate
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        let hasConflict = false;
+        let currentDate = new Date(start);
+        while (currentDate <= end) {
+            const currentDateStr = formatDate(currentDate);
+            const dayBookings = bookings.filter(booking =>
+                booking.id !== bookingId &&
+                booking.carId === carId &&
+                booking.status !== 'rejected' &&
+                (booking.startDate <= currentDateStr && booking.endDate >= currentDateStr) &&
+                ((startTime >= booking.startTime && startTime < booking.endTime) ||
+                 (endTime > booking.startTime && endTime <= booking.endTime) ||
+                 (startTime <= booking.startTime && endTime >= booking.endTime))
+            );
+            if (dayBookings.length > 0) {
+                hasConflict = true;
+                break;
             }
-            carId = carSelect.value;
+            currentDate.setDate(currentDate.getDate() + 1);
         }
 
-        if (!startDateInput || !startDateInput.value) {
-            showSweetAlert('กรุณาเลือกวันที่ออก', 'error');
+        if (hasConflict) {
+            showSweetAlert('รถคันนี้มีการจองในช่วงเวลานี้แล้ว', 'error');
             return;
-        }
-
-        const startDate = startDateInput.value;
-        const endDate = endDateInput.value;
-        const today = formatDate(new Date());
-        if (new Date(startDate) < new Date(today)) {
-            showSweetAlert('ไม่สามารถจองย้อนหลังได้', 'error');
-            return;
-        }
-
-        if (new Date(endDate) < new Date(startDate)) {
-            showSweetAlert('วันที่เข้าต้องไม่ก่อนวันที่ออก', 'error');
-            return;
-        }
-
-        if (!document.getElementById('startTime') || !document.getElementById('startTime').value) {
-            showSweetAlert('กรุณาเลือกเวลาเริ่มต้น', 'error');
-            return;
-        }
-
-        if (!document.getElementById('endTime') || !document.getElementById('endTime').value) {
-            showSweetAlert('กรุณาเลือกเวลาสิ้นสุด', 'error');
-            return;
-        }
-
-        const startTime = document.getElementById('startTime').value;
-        const endTime = document.getElementById('endTime').value;
-        const bookingId = bookingIdInput.value || '';
-
-        if (purpose === 'normal') {
-            // เช็ค conflict สำหรับทุกวันระหว่าง startDate และ endDate
-            const start = new Date(startDate);
-            const end = new Date(endDate);
-            let hasConflict = false;
-            let currentDate = new Date(start);
-            while (currentDate <= end) {
-                const currentDateStr = formatDate(currentDate);
-                const dayBookings = bookings.filter(booking =>
-                    booking.id !== bookingId &&
-                    booking.carId === carId &&
-                    booking.status !== 'rejected' &&
-                    (booking.startDate <= currentDateStr && booking.endDate >= currentDateStr) &&
-                    ((startTime >= booking.startTime && startTime < booking.endTime) ||
-                     (endTime > booking.startTime && endTime <= booking.endTime) ||
-                     (startTime <= booking.startTime && endTime >= booking.endTime))
-                );
-                if (dayBookings.length > 0) {
-                    hasConflict = true;
-                    break;
-                }
-                currentDate.setDate(currentDate.getDate() + 1);
-            }
-
-            if (hasConflict) {
-                showSweetAlert('รถคันนี้มีการจองในช่วงเวลานี้แล้ว', 'error');
-                return;
-            }
-        }
-
-        const bookingData = {
-            startDate: startDate,
-            endDate: endDate,
-            bookerName: bookerNameInput.value,
-            department: departmentInput.value,
-            carId: carId,
-            purpose: purpose,
-            driverStatus: document.querySelector('input[name="driverStatus"]:checked')?.value || 'self',
-            startTime: startTime,
-            endTime: endTime,
-            destination: document.getElementById('destination').value,
-            notes: document.getElementById('notes').value,
-            userId: currentUser.uid,
-            status: currentUser.role === 'admin' ? (document.querySelector('input[name="approvalStatus"]:checked')?.value || 'approved') : 'pending'
-        };
-
-        if (bookingId) {
-            updateBooking(bookingId, bookingData);
-        } else {
-            createBooking(bookingData);
         }
     }
+
+    const bookingData = {
+        startDate: startDate,
+        endDate: endDate,
+        bookerName: bookerNameInput.value,
+        department: departmentInput.value,
+        carId: carId,
+        purpose: purpose,
+        driverStatus: document.querySelector('input[name="driverStatus"]:checked')?.value || 'self',
+        startTime: startTime,
+        endTime: endTime,
+        destination: document.getElementById('destination').value,
+        notes: document.getElementById('notes').value,
+        userId: currentUser.uid,
+        status: currentUser.role === 'admin' ? (document.querySelector('input[name="approvalStatus"]:checked')?.value || 'approved') : 'pending'
+    };
+
+    if (bookingId) {
+        updateBooking(bookingId, bookingData);
+    } else {
+        createBooking(bookingData);
+    }
+}
 
     function createBooking(bookingData) {
         const newBookingRef = database.ref('bookings').push();
@@ -2682,10 +2881,17 @@ function showMyBookingsModal() {
 
 function updateMyTodayBookings() {
     const today = formatDate(new Date());
-    const myTodayBookingsList = bookings.filter(booking =>
-        booking.userId === currentUser.uid &&
-        booking.startDate <= today && booking.endDate >= today
-    ).sort((a, b) => new Date(b.startDate + 'T' + b.startTime) - new Date(a.startDate + 'T' + a.startTime));
+    
+    // สำหรับแอดมิน: แสดงรายการจองวันนี้ทั้งหมด
+    // สำหรับผู้ใช้ทั่วไป: แสดงเฉพาะการจองของตัวเอง
+    const myTodayBookingsList = currentUser.role === 'admin' 
+        ? bookings.filter(booking => 
+            booking.startDate <= today && booking.endDate >= today
+          ).sort((a, b) => new Date(b.startDate + 'T' + b.startTime) - new Date(a.startDate + 'T' + a.startTime))
+        : bookings.filter(booking =>
+            booking.userId === currentUser.uid &&
+            booking.startDate <= today && booking.endDate >= today
+          ).sort((a, b) => new Date(b.startDate + 'T' + b.startTime) - new Date(a.startDate + 'T' + a.startTime));
 
     const pendingBookingsList = currentUser.role === 'admin' ? 
         bookings.filter(booking => booking.status === 'pending')
@@ -2709,7 +2915,7 @@ function updateMyTodayBookings() {
             bookingItem.className = 'my-booking-item pending';
             
             const isPastDate = new Date(booking.startDate) < new Date(formatDate(new Date()));
-            const canEdit = !isPastDate && currentUser.role === 'admin'; // แอดมินแก้ไขได้
+            const canEdit = !isPastDate && currentUser.role === 'admin';
 
             bookingItem.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
@@ -2732,17 +2938,20 @@ function updateMyTodayBookings() {
         });
     }
 
-    // แสดงรายการจองของตัวเองวันนี้
+    // แสดงรายการจองวันนี้
     if (myTodayBookingsList.length === 0) {
         if (currentUser.role !== 'admin' || pendingBookingsList.length === 0) {
             myTodayBookings.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 20px;">ไม่มีรายการจองรถวันนี้</p>';
         }
     } else {
+        const sectionTitle = currentUser.role === 'admin' ? 'การจองวันนี้ทั้งหมด' : 'การจองของฉันวันนี้';
+        const sectionIcon = currentUser.role === 'admin' ? 'fas fa-list' : 'fas fa-user';
+        
         const mySection = document.createElement('div');
         mySection.innerHTML = `
             <h4 style="margin: ${currentUser.role === 'admin' && pendingBookingsList.length > 0 ? '16px 0 8px 0' : '0 0 8px 0'}; color: var(--primary); display: flex; align-items: center; gap: 6px;">
-                <i class="fas fa-user"></i>
-                การจองของฉันวันนี้
+                <i class="${sectionIcon}"></i>
+                ${sectionTitle}
             </h4>
         `;
         myTodayBookings.appendChild(mySection);
@@ -2755,35 +2964,116 @@ function updateMyTodayBookings() {
             const isPending = booking.status === 'pending';
             const isApproved = booking.status === 'approved';
             
-            // แก้ไขเงื่อนไข: แอดมินสามารถแก้ไขการจองที่รออนุมัติหรืออนุมัติแล้วได้
+            // เงื่อนไขการบันทึกไมล์: สามารถบันทึกได้ถ้าเป็นวันนี้หรือวันที่ผ่านมาแล้ว
+            const isPastOrToday = new Date(booking.startDate) <= new Date(formatDate(new Date()));
+            const canRecordMileage = isPastOrToday && (currentUser.role === 'admin' || booking.userId === currentUser.uid);
+            
+            const hasMileageOut = booking.mileageOut && booking.mileageOut !== '';
+            const hasMileageIn = booking.mileageIn && booking.mileageIn !== '';
+            
+            // สำหรับแอดมิน: สามารถจัดการการจองทั้งหมดได้
+            // สำหรับผู้ใช้ทั่วไป: จัดการได้เฉพาะของตัวเอง
             const canEdit = !isPastDate && (
-                (currentUser.role === 'admin' && (isPending || isApproved)) || // แอดมินแก้ไขได้ทั้งที่รออนุมัติและอนุมัติแล้ว
-                (isPending) // ผู้ใช้แก้ไขได้เฉพาะที่รออนุมัติ
+                (currentUser.role === 'admin' && (isPending || isApproved)) || 
+                (booking.userId === currentUser.uid && isPending)
             );
             
-            const canCancel = !isPastDate && (
+            // ซ่อนปุ่มยกเลิกเมื่อบันทึกไมล์ออกแล้ว
+            const canCancel = !isPastDate && !hasMileageOut && (
                 (currentUser.role === 'admin') || 
-                (isPending || isApproved)
+                (booking.userId === currentUser.uid && (isPending || isApproved))
             );
 
-            bookingItem.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
-                    <div>
-                        <div style="font-weight: 600; margin-bottom: 4px;">${getCarName(booking.carId)}</div>
-                        <div style="font-size: 0.8rem; color: var(--gray);">${formatThaiDate(new Date(booking.startDate))} - ${formatThaiDate(new Date(booking.endDate))} | ${booking.startTime} - ${booking.endTime}</div>
+            // สำหรับแอดมิน: แสดงชื่อผู้จองด้วย
+            const displayCarInfo = currentUser.role === 'admin' 
+                ? `${getCarName(booking.carId)} - ${booking.bookerName}`
+                : getCarName(booking.carId);
+
+            // ถ้าบันทึกไมล์เข้าแล้ว ให้แสดงเฉพาะข้อมูลอย่างเดียว
+            if (hasMileageIn) {
+                bookingItem.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 4px;">${displayCarInfo}</div>
+                            <div style="font-size: 0.8rem; color: var(--gray);">
+                                ${formatThaiDate(new Date(booking.startDate))} - ${formatThaiDate(new Date(booking.endDate))} | ${booking.startTime} - ${booking.endTime}
+                                ${currentUser.role === 'admin' && booking.userId !== currentUser.uid ? '<br><span style="color: var(--accent);">👤 การจองของผู้อื่น</span>' : ''}
+                            </div>
+                        </div>
+                        <span class="status-badge status-${booking.status || 'pending'}">${getStatusText(booking.status || 'pending')}</span>
                     </div>
-                    <span class="status-badge status-${booking.status || 'pending'}">${getStatusText(booking.status || 'pending')}</span>
-                </div>
-                <div style="font-size: 0.8rem; color: var(--dark); margin-bottom: ${canEdit || canCancel ? '8px' : '0'};">
-                    <div>${getPurposeText(booking.purpose)} • ${booking.destination}</div>
-                </div>
-                ${(canEdit || canCancel) ? `
-                <div class="booking-actions" style="display: flex; gap: 6px; justify-content: flex-end;">
-                    ${canEdit ? `<button class="btn btn-sm btn-primary" onclick="showEditBookingModal('${booking.id}')">แก้ไข</button>` : ''}
-                    ${canCancel ? `<button class="btn btn-sm btn-danger" onclick="cancelBooking('${booking.id}')">ยกเลิก</button>` : ''}
-                </div>
-                ` : ''}
-            `;
+                    <div style="font-size: 0.8rem; color: var(--dark); margin-bottom: 8px;">
+                        <div>${getPurposeText(booking.purpose)} • ${booking.destination}</div>
+                    </div>
+                `;
+            } else {
+                // กรณียังไม่บันทึกไมล์เข้า
+                bookingItem.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 4px;">${displayCarInfo}</div>
+                            <div style="font-size: 0.8rem; color: var(--gray);">
+                                ${formatThaiDate(new Date(booking.startDate))} - ${formatThaiDate(new Date(booking.endDate))} | ${booking.startTime} - ${booking.endTime}
+                                ${currentUser.role === 'admin' && booking.userId !== currentUser.uid ? '<br><span style="color: var(--accent);">👤 การจองของผู้อื่น</span>' : ''}
+                            </div>
+                        </div>
+                        <span class="status-badge status-${booking.status || 'pending'}">${getStatusText(booking.status || 'pending')}</span>
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--dark); margin-bottom: ${canEdit || canCancel || canRecordMileage ? '8px' : '0'};">
+                        <div>${getPurposeText(booking.purpose)} • ${booking.destination}</div>
+                    </div>
+                    ${(canEdit || canCancel || canRecordMileage) ? `
+                    <div class="booking-actions" style="display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap;">
+                        ${canEdit ? `<button class="btn btn-sm btn-primary" onclick="showEditBookingModal('${booking.id}')">แก้ไข</button>` : ''}
+                        ${canCancel ? `<button class="btn btn-sm btn-danger" onclick="cancelBooking('${booking.id}')">ยกเลิก</button>` : ''}
+                        ${canRecordMileage ? `
+                            <button class="btn btn-sm ${!hasMileageOut ? 'btn-warning' : !hasMileageIn ? 'btn-secondary' : 'btn-primary'}" onclick="showMileageForm('${booking.id}')">
+                                <i class="fas fa-tachometer-alt"></i> 
+                                ${!hasMileageOut ? 'บันทึกไมล์ออก' : !hasMileageIn ? 'บันทึกไมล์เข้า' : 'ดู/แก้ไขไมล์'}
+                            </button>
+                        ` : ''}
+                    </div>
+                    ` : ''}
+                `;
+            }
+            
+            // แสดงข้อมูลไมล์ถ้ามี
+            if (hasMileageOut || hasMileageIn) {
+                const mileageInfo = document.createElement('div');
+                mileageInfo.className = 'mileage-info';
+                mileageInfo.style.marginTop = '8px';
+                mileageInfo.style.padding = '8px';
+                mileageInfo.style.background = 'rgba(52, 199, 89, 0.1)';
+                mileageInfo.style.borderRadius = '6px';
+                mileageInfo.style.fontSize = '0.75rem';
+
+                let infoHTML = '<strong><i class="fas fa-tachometer-alt"></i> ข้อมูลไมล์:</strong><br>';
+
+                if (hasMileageOut) {
+                    infoHTML += `ออก: ${booking.mileageOut} กม.`;
+                    if (booking.actualStartTime) infoHTML += ` (ออก ${booking.actualStartTime})`;
+                    if (booking.mileageOutRecordedBy) infoHTML += ` โดย ${booking.mileageOutRecordedBy}`;
+                    infoHTML += '<br>';
+                }
+
+                if (hasMileageIn) {
+                    infoHTML += `เข้า: ${booking.mileageIn} กม.`;
+                    if (booking.actualEndTime) infoHTML += ` (เข้า ${booking.actualEndTime})`;
+                    if (booking.mileageInRecordedBy) infoHTML += ` โดย ${booking.mileageInRecordedBy}`;
+                    const distance = parseInt(booking.mileageIn) - parseInt(booking.mileageOut);
+                    infoHTML += `<br><strong>ระยะทาง: ${distance} กม.</strong>`;
+                } else if (hasMileageOut) {
+                    infoHTML += '⏳ รอบันทึกไมล์เข้า';
+                }
+
+                if (booking.mileageNotes) {
+                    infoHTML += `<br>หมายเหตุ: ${booking.mileageNotes}`;
+                }
+
+                mileageInfo.innerHTML = infoHTML;
+                bookingItem.appendChild(mileageInfo);
+            }
+            
             myTodayBookings.appendChild(bookingItem);
         });
     }
@@ -2800,20 +3090,35 @@ function updateMyTodayBookings() {
         });
     }
 
-    function resetBookingForm() {
-        bookingForm.reset();
-        bookingIdInput.value = '';
-        adminControls.style.display = 'none';
-        // document.getElementById('selfDrive').checked = true;
-        // document.getElementById('purposeNormal').checked = true;
-        carSelectGroup.style.display = 'block';
-        carSelect.setAttribute('required', 'required');
-
-        const today = formatDate(new Date());
-        startDateInput.value = today;
-        endDateInput.value = today;
+function resetBookingForm() {
+    bookingForm.reset();
+    bookingIdInput.value = '';
+    adminControls.style.display = 'none';
+    carSelectGroup.style.display = 'block';
+    
+    // ตั้ง required ให้ฟิลด์ที่จำเป็น
+    document.getElementById('startDate').setAttribute('required', 'required');
+    document.getElementById('endDate').setAttribute('required', 'required');
+    document.getElementById('startTime').setAttribute('required', 'required');
+    document.getElementById('endTime').setAttribute('required', 'required');
+    document.getElementById('destination').setAttribute('required', 'required');
+    document.querySelectorAll('input[name="driverStatus"]').forEach(radio => {
+        radio.setAttribute('required', 'required');
+    });
+    
+    // ตั้ง required ให้ carSelect ถ้าเลือกโหมดปกติ
+    const purposeNormal = document.getElementById('purposeNormal');
+    if (purposeNormal && purposeNormal.checked) {
+        document.getElementById('carSelect').setAttribute('required', 'required');
     }
 
+    const today = formatDate(new Date());
+    startDateInput.value = today;
+    endDateInput.value = today;
+    
+    // รีเซ็ตฟอร์มบันทึกไมล์ด้วย
+    resetMileageForm();
+}
     function resetCarForm() {
         carForm.reset();
         document.getElementById('carId').value = '';
@@ -2884,9 +3189,580 @@ function showEditBookingModal(bookingId) {
         viewBookingsModal.classList.remove('active');
         myBookingsModal.classList.remove('active');
         
+        // รีเซ็ตฟอร์มก่อน
+        resetBookingForm();
+        
+        // แสดงฟิลด์การจองทั้งหมด
+        showBookingFormFields();
+        
         // แสดงฟอร์มแก้ไขการจอง
         showBookingModal(null, booking);
     }
+}
+
+// แก้ฟังก์ชัน addMileageActionButtons ทั้งหมดใหม่ (แทนของเดิม)
+function addMileageActionButtons(bookingItem, booking) {
+    const isAdmin = currentUser.role === 'admin';
+    const isOwner = booking.userId === currentUser.uid;
+    const isPastOrToday = new Date(booking.startDate) <= new Date(formatDate(new Date())); // รวมวันนี้ด้วย
+
+    // เงื่อนไขใหม่:
+    // - แอดมิน: บันทึกไมล์ได้ทุกรายการ (ไม่ต้องเป็นเจ้าของ)
+    // - ผู้ใช้ทั่วไป: บันทึกได้เฉพาะของตัวเอง + ต้องเป็นวันที่ผ่านไปแล้วหรือวันนี้
+    const canRecordMileage = isAdmin || (isOwner && isPastOrToday);
+
+    const hasMileageOut = booking.mileageOut && booking.mileageOut !== '';
+    const hasMileageIn = booking.mileageIn && booking.mileageIn !== '';
+
+    if (canRecordMileage) {
+        const mileageActions = document.createElement('div');
+        mileageActions.className = 'mileage-actions';
+        mileageActions.style.marginTop = '10px';
+        mileageActions.style.paddingTop = '10px';
+        mileageActions.style.borderTop = '1px solid rgba(0,0,0,0.1)';
+
+        let buttonText = 'บันทึกไมล์';
+        let buttonClass = 'btn-warning';
+
+        if (!hasMileageOut) {
+            buttonText = 'บันทึกไมล์ออก';
+            buttonClass = 'btn-warning';
+        } else if (!hasMileageIn) {
+            buttonText = 'บันทึกไมล์เข้า';
+            buttonClass = 'btn-secondary';
+        } else {
+            buttonText = 'ดู/แก้ไขไมล์';
+            buttonClass = 'btn-primary';
+        }
+
+        mileageActions.innerHTML = `
+            <button class="btn btn-sm ${buttonClass}" onclick="showMileageForm('${booking.id}')">
+                <i class="fas fa-tachometer-alt"></i> ${buttonText}
+            </button>
+        `;
+
+        bookingItem.appendChild(mileageActions);
+    }
+
+    // แสดงข้อมูลไมล์ (ทุกคนดูได้)
+    if (hasMileageOut || hasMileageIn) {
+        const mileageInfo = document.createElement('div');
+        mileageInfo.className = 'mileage-info';
+        mileageInfo.style.marginTop = '8px';
+        mileageInfo.style.padding = '8px';
+        mileageInfo.style.background = 'rgba(52, 199, 89, 0.1)';
+        mileageInfo.style.borderRadius = '6px';
+        mileageInfo.style.fontSize = '0.8rem';
+
+        let infoHTML = '<strong><i class="fas fa-tachometer-alt"></i> ข้อมูลไมล์:</strong><br>';
+
+        if (hasMileageOut) {
+            infoHTML += `ออก: ${booking.mileageOut} กม.`;
+            if (booking.actualStartTime) infoHTML += ` (ออก ${booking.actualStartTime})`;
+            if (booking.mileageOutRecordedBy) infoHTML += ` โดย ${booking.mileageOutRecordedBy}`;
+            infoHTML += '<br>';
+        }
+
+        if (hasMileageIn) {
+            infoHTML += `เข้า: ${booking.mileageIn} กม.`;
+            if (booking.actualEndTime) infoHTML += ` (เข้า ${booking.actualEndTime})`;
+            if (booking.mileageInRecordedBy) infoHTML += ` โดย ${booking.mileageInRecordedBy}`;
+            const distance = parseInt(booking.mileageIn) - parseInt(booking.mileageOut);
+            infoHTML += `<br><strong>ระยะทาง: ${distance} กม.</strong>`;
+        } else if (hasMileageOut) {
+            infoHTML += '⏳ รอบันทึกไมล์เข้า';
+        }
+
+        if (booking.mileageNotes) {
+            infoHTML += `<br>หมายเหตุ: ${booking.mileageNotes}`;
+        }
+
+        mileageInfo.innerHTML = infoHTML;
+        bookingItem.appendChild(mileageInfo);
+    }
+}
+
+
+// ฟังก์ชันแสดงฟอร์มบันทึกไมล์
+function showMileageForm(bookingId) {
+    const booking = bookings.find(b => b.id === bookingId);
+    if (!booking) return;
+
+
+
+    const isAdmin = currentUser.role === 'admin';
+    const isOwner = booking.userId === currentUser.uid;
+    const isPastOrToday = new Date(booking.startDate) <= new Date(formatDate(new Date()));
+    const canRecord = isAdmin || (isOwner && isPastOrToday);
+
+    if (!canRecord) {
+        showSweetAlert('คุณไม่มีสิทธิ์บันทึกไมล์ในรายการนี้', 'error');
+        return;
+    }
+    
+    // ปิดโมดอลการจองทั้งหมดก่อน
+    viewBookingsModal.classList.remove('active');
+    myBookingsModal.classList.remove('active');
+    
+    // รีเซ็ตฟอร์มการจองก่อน
+    resetBookingForm();
+    
+    // เตรียมข้อมูลสำหรับฟอร์ม
+    document.getElementById('bookingId').value = bookingId;
+    
+    // แสดงข้อมูลการจองรถ (อ่านอย่างเดียว)
+    displayBookingInfo(booking);
+    
+    // เติมข้อมูลไมล์ที่มีอยู่แล้ว
+    if (booking.actualStartTime) {
+        document.getElementById('actualStartTime').value = booking.actualStartTime;
+    }
+    if (booking.actualEndTime) {
+        document.getElementById('actualEndTime').value = booking.actualEndTime;
+    }
+    if (booking.mileageOut) {
+        document.getElementById('mileageOut').value = booking.mileageOut;
+    }
+    if (booking.mileageIn) {
+        document.getElementById('mileageIn').value = booking.mileageIn;
+    }
+    if (booking.mileageNotes) {
+        document.getElementById('mileageNotes').value = booking.mileageNotes;
+    }
+    
+    // ซ่อนฟิลด์การจองทั้งหมดและลบ required
+    hideBookingFormFields();
+    
+    // แสดงส่วนบันทึกไมล์
+    document.getElementById('mileageSection').style.display = 'block';
+    
+    // กำหนดปุ่มบันทึกตามสถานะ
+    setupMileageButton(booking);
+    
+    // แสดง modal การจอง (แต่ในโหมดบันทึกไมล์)
+    bookingModal.classList.add('active');
+}
+
+// ฟังก์ชันซ่อนฟิลด์การจองและลบ required
+function hideBookingFormFields() {
+    // รายการฟิลด์ที่จะซ่อน
+    const fieldsToHide = [
+        'startDate', 'endDate', 'bookerName', 'department', 
+        'purposeNormal', 'purposeLeaveWork', 'purposeCarToWork',
+        'carSelectGroup', 'selfDrive', 'withDriver',
+        'startTime', 'endTime', 'destination', 'notes', 'adminControls'
+    ];
+    
+    fieldsToHide.forEach(fieldId => {
+        const element = document.getElementById(fieldId);
+        if (element) {
+            // ถ้าเป็น radio group ให้ซ่อน container และลบ required
+            if (fieldId.includes('purpose') || fieldId.includes('Drive')) {
+                const container = element.closest('.form-group');
+                if (container) {
+                    container.style.display = 'none';
+                    // ลบ required จาก radio buttons
+                    container.querySelectorAll('input[required]').forEach(input => {
+                        input.removeAttribute('required');
+                    });
+                }
+            } else {
+                element.style.display = 'none';
+                // ลบ attribute required
+                element.removeAttribute('required');
+            }
+        }
+    });
+    
+    // ซ่อน label ของฟิลด์ที่ซ่อน
+    document.querySelectorAll('.form-label').forEach(label => {
+        const forId = label.getAttribute('for');
+        if (forId && fieldsToHide.includes(forId)) {
+            label.style.display = 'none';
+        }
+    });
+    
+    // ซ่อน form-group ที่ไม่มีฟิลด์ที่แสดงอยู่
+    document.querySelectorAll('.form-group').forEach(group => {
+        const visibleFields = group.querySelectorAll('input:not([style*="display: none"]), select:not([style*="display: none"]), textarea:not([style*="display: none"])');
+        if (visibleFields.length === 0 && !group.querySelector('#mileageSection')) {
+            group.style.display = 'none';
+        }
+    });
+    
+    // ลบ required จาก carSelect โดยเฉพาะ
+    const carSelect = document.getElementById('carSelect');
+    if (carSelect) {
+        carSelect.removeAttribute('required');
+    }
+    
+    // ลบ required จาก radio buttons โดยเฉพาะ
+    document.querySelectorAll('input[type="radio"][required]').forEach(radio => {
+        radio.removeAttribute('required');
+    });
+}
+
+// ฟังก์ชันแสดงฟิลด์การจองกลับคืน
+function showBookingFormFields() {
+    // แสดงฟิลด์ทั้งหมดกลับมา
+    const fieldsToShow = [
+        'startDate', 'endDate', 'bookerName', 'department', 
+        'purposeNormal', 'purposeLeaveWork', 'purposeCarToWork',
+        'carSelectGroup', 'selfDrive', 'withDriver',
+        'startTime', 'endTime', 'destination', 'notes', 'adminControls'
+    ];
+    
+    fieldsToShow.forEach(fieldId => {
+        const element = document.getElementById(fieldId);
+        if (element) {
+            element.style.display = '';
+            
+            // คืน attribute required สำหรับฟิลด์ที่จำเป็น
+            if (['startDate', 'endDate', 'startTime', 'endTime', 'destination'].includes(fieldId)) {
+                element.setAttribute('required', 'required');
+            }
+        }
+    });
+    
+    // แสดง label กลับคืน
+    document.querySelectorAll('.form-label').forEach(label => {
+        label.style.display = 'block';
+    });
+    
+    // แสดง form-group กลับคืน
+    document.querySelectorAll('.form-group').forEach(group => {
+        group.style.display = 'block';
+    });
+    
+    // คืน required ให้ radio buttons
+    document.querySelectorAll('input[name="driverStatus"]').forEach(radio => {
+        radio.setAttribute('required', 'required');
+    });
+    
+    // คืน required ให้ carSelect ถ้าอยู่ในโหมดปกติ
+    const purposeNormal = document.getElementById('purposeNormal');
+    if (purposeNormal && purposeNormal.checked) {
+        document.getElementById('carSelectGroup').style.display = 'block';
+        const carSelect = document.getElementById('carSelect');
+        if (carSelect) {
+            carSelect.setAttribute('required', 'required');
+        }
+    } else {
+        document.getElementById('carSelectGroup').style.display = 'none';
+        const carSelect = document.getElementById('carSelect');
+        if (carSelect) {
+            carSelect.removeAttribute('required');
+        }
+    }
+    
+    // ปรับการแสดงผลของ adminControls ตาม role
+    if (currentUser.role === 'admin') {
+        document.getElementById('adminControls').style.display = 'block';
+    } else {
+        document.getElementById('adminControls').style.display = 'none';
+    }
+}
+
+// ฟังก์ชันแสดงข้อมูลการจองรถ (อ่านอย่างเดียว)
+function displayBookingInfo(booking) {
+    // สร้างส่วนแสดงข้อมูลการจอง
+    const bookingInfoSection = document.createElement('div');
+    bookingInfoSection.className = 'booking-info-section';
+    bookingInfoSection.innerHTML = `
+        <h4 style="margin: 0 0 12px 0; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-info-circle"></i> ข้อมูลการจอง
+        </h4>
+        <div style="background: rgba(0, 122, 255, 0.05); padding: 12px; border-radius: 8px; margin-bottom: 16px;">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">ผู้จอง</label>
+                    <input type="text" class="form-control" value="${booking.bookerName}" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">แผนก</label>
+                    <input type="text" class="form-control" value="${booking.department}" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">วันที่ออก</label>
+                    <input type="text" class="form-control" value="${formatThaiDate(new Date(booking.startDate))}" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">วันที่เข้า</label>
+                    <input type="text" class="form-control" value="${formatThaiDate(new Date(booking.endDate))}" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">เวลาออก</label>
+                    <input type="text" class="form-control" value="${booking.startTime}" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">เวลาเข้า</label>
+                    <input type="text" class="form-control" value="${booking.endTime}" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">รถที่จอง</label>
+                <input type="text" class="form-control" value="${getCarName(booking.carId)}" readonly>
+            </div>
+            <div class="form-group">
+                <label class="form-label">จุดหมาย</label>
+                <input type="text" class="form-control" value="${booking.destination}" readonly>
+            </div>
+            ${booking.notes ? `
+            <div class="form-group">
+                <label class="form-label">หมายเหตุการจอง</label>
+                <textarea class="form-control" rows="2" readonly>${booking.notes}</textarea>
+            </div>
+            ` : ''}
+        </div>
+    `;
+    
+    // แทรกส่วนแสดงข้อมูลก่อนส่วนบันทึกไมล์
+    const mileageSection = document.getElementById('mileageSection');
+    mileageSection.parentNode.insertBefore(bookingInfoSection, mileageSection);
+}
+
+// ฟังก์ชันตั้งค่าปุ่มบันทึกตามสถานะ
+function setupMileageButton(booking) {
+    const hasMileageOut = booking.mileageOut && booking.mileageOut !== '';
+    const hasMileageIn = booking.mileageIn && booking.mileageIn !== '';
+    
+    // ลบ required จากฟิลด์ไมล์ทั้งหมดก่อน
+    document.getElementById('mileageOut').removeAttribute('required');
+    document.getElementById('mileageIn').removeAttribute('required');
+    document.getElementById('actualStartTime').removeAttribute('required');
+    document.getElementById('actualEndTime').removeAttribute('required');
+    document.getElementById('mileageNotes').removeAttribute('required');
+    
+    if (!hasMileageOut) {
+        // ยังไม่ได้บันทึกไมล์ออก
+        document.getElementById('bookingModalTitle').textContent = 'บันทึกไมล์ออก';
+        document.getElementById('saveBooking').textContent = 'บันทึกไมล์ออก';
+        
+        // แสดงเฉพาะฟิลด์ไมล์ออกและเวลาออกจริง
+        document.getElementById('mileageIn').closest('.form-group').style.display = 'none';
+        document.getElementById('actualEndTime').closest('.form-group').style.display = 'none';
+        
+        // ตั้งค่า required สำหรับไมล์ออกเท่านั้น
+        document.getElementById('mileageOut').setAttribute('required', 'required');
+        
+    } else if (hasMileageOut && !hasMileageIn) {
+        // บันทึกไมล์ออกแล้ว แต่ยังไม่ได้บันทึกไมล์เข้า
+        document.getElementById('bookingModalTitle').textContent = 'บันทึกไมล์เข้า';
+        document.getElementById('saveBooking').textContent = 'บันทึกไมล์เข้า';
+        
+        // แสดงเฉพาะฟิลด์ไมล์เข้าและเวลาเข้าจริง
+        document.getElementById('mileageOut').closest('.form-group').style.display = 'none';
+        document.getElementById('actualStartTime').closest('.form-group').style.display = 'none';
+        
+        // ตั้งค่า required สำหรับไมล์เข้าเท่านั้น
+        document.getElementById('mileageIn').setAttribute('required', 'required');
+        
+        // แสดงสรุปไมล์ออก
+        showMileageOutSummary(booking);
+        
+    } else {
+        // บันทึกครบทั้งไมล์เข้าและออกแล้ว
+        document.getElementById('bookingModalTitle').textContent = 'ข้อมูลไมล์และเวลา';
+        document.getElementById('saveBooking').textContent = 'อัพเดตข้อมูลไมล์';
+        
+        // ไม่ตั้ง required สำหรับฟิลด์ใดๆ ในโหมดอัพเดต
+        // แสดงสรุปทั้งหมด
+        showFullMileageSummary(booking);
+    }
+}
+
+// ฟังก์ชันแสดงสรุปไมล์ออก
+function showMileageOutSummary(booking) {
+    const summarySection = document.createElement('div');
+    summarySection.className = 'mileage-out-summary';
+    summarySection.innerHTML = `
+        <div style="background: rgba(255, 149, 0, 0.1); padding: 10px; border-radius: 6px; margin: 10px 0; border-left: 3px solid var(--warning);">
+            <strong><i class="fas fa-check-circle"></i> บันทึกไมล์ออกแล้ว:</strong>
+            <div style="font-size: 0.9rem; margin-top: 5px;">
+                ไมล์ออก: ${booking.mileageOut} 
+                ${booking.actualStartTime ? `(เวลาออกจริง: ${booking.actualStartTime})` : ''}
+                ${booking.mileageOutRecordedBy ? `- โดย: ${booking.mileageOutRecordedBy}` : ''}
+            </div>
+        </div>
+    `;
+    
+    const mileageSection = document.getElementById('mileageSection');
+    mileageSection.parentNode.insertBefore(summarySection, mileageSection);
+}
+
+// ฟังก์ชันแสดงสรุปไมล์ครบถ้วน
+function showFullMileageSummary(booking) {
+    const distance = parseInt(booking.mileageIn) - parseInt(booking.mileageOut);
+    
+    const summarySection = document.createElement('div');
+    summarySection.className = 'full-mileage-summary';
+    summarySection.innerHTML = `
+        <div style="background: rgba(52, 199, 89, 0.1); padding: 12px; border-radius: 8px; margin: 10px 0; border-left: 3px solid var(--secondary);">
+            <strong><i class="fas fa-chart-line"></i> สรุปการใช้งาน:</strong>
+            <div style="font-size: 0.9rem; margin-top: 8px;">
+                <div>ไมล์ออก: ${booking.mileageOut} ${booking.actualStartTime ? `(เวลาออกจริง: ${booking.actualStartTime})` : ''}</div>
+                <div>ไมล์เข้า: ${booking.mileageIn} ${booking.actualEndTime ? `(เวลาเข้าจริง: ${booking.actualEndTime})` : ''}</div>
+                <div style="font-weight: 600; color: var(--accent); margin-top: 5px;">
+                    ระยะทางที่ใช้: ${distance} กม.
+                </div>
+                ${booking.mileageNotes ? `<div style="margin-top: 5px;">หมายเหตุ: ${booking.mileageNotes}</div>` : ''}
+            </div>
+        </div>
+    `;
+    
+    const mileageSection = document.getElementById('mileageSection');
+    mileageSection.parentNode.insertBefore(summarySection, mileageSection);
+}
+
+
+
+// ฟังก์ชันจัดการการบันทึกไมล์
+function handleMileageRecording() {
+    const bookingId = document.getElementById('bookingId').value;
+    const booking = bookings.find(b => b.id === bookingId);
+    if (!booking) return;
+
+    const actualStartTime = document.getElementById('actualStartTime').value;
+    const actualEndTime = document.getElementById('actualEndTime').value;
+    const mileageOut = document.getElementById('mileageOut').value;
+    const mileageIn = document.getElementById('mileageIn').value;
+    const mileageNotes = document.getElementById('mileageNotes').value;
+
+    const hasMileageOut = booking.mileageOut && booking.mileageOut !== '';
+    const hasMileageIn = booking.mileageIn && booking.mileageIn !== '';
+
+    let updateData = {};
+    const recordedBy = currentUser.displayName || currentUser.email;
+    const recordedAt = firebase.database.ServerValue.TIMESTAMP;
+
+    // ตรวจสอบสถานะและบันทึกข้อมูลตามนั้น
+    if (!hasMileageOut) {
+        // บันทึกไมล์ออก
+        if (!mileageOut) {
+            showSweetAlert('กรุณากรอกเลขไมล์ออก', 'error');
+            return;
+        }
+        if (mileageOut < 0) {
+            showSweetAlert('เลขไมล์ออกต้องมากกว่าหรือเท่ากับ 0', 'error');
+            return;
+        }
+
+        updateData = {
+            mileageOut: mileageOut,
+            mileageOutRecordedBy: recordedBy,
+            mileageOutRecordedAt: recordedAt,
+            mileageNotes: mileageNotes || ''
+        };
+
+        if (actualStartTime) updateData.actualStartTime = actualStartTime;
+
+    } else if (hasMileageOut && !hasMileageIn) {
+        // บันทึกไมล์เข้า
+        if (!mileageIn) {
+            showSweetAlert('กรุณากรอกเลขไมล์เข้า', 'error');
+            return;
+        }
+        if (mileageIn < 0) {
+            showSweetAlert('เลขไมล์เข้าต้องมากกว่าหรือเท่ากับ 0', 'error');
+            return;
+        }
+        if (parseInt(mileageIn) <= parseInt(booking.mileageOut)) {
+            showSweetAlert('ไมล์เข้าต้องมากกว่าไมล์ออก', 'error');
+            return;
+        }
+
+        updateData = {
+            mileageIn: mileageIn,
+            mileageInRecordedBy: recordedBy,
+            mileageInRecordedAt: recordedAt
+        };
+
+        if (actualEndTime) updateData.actualEndTime = actualEndTime;
+        if (mileageNotes) updateData.mileageNotes = mileageNotes;
+
+    } else {
+        // อัพเดตข้อมูลที่มีอยู่
+        updateData = {};
+        if (mileageOut) updateData.mileageOut = mileageOut;
+        if (mileageIn) updateData.mileageIn = mileageIn;
+        if (actualStartTime) updateData.actualStartTime = actualStartTime;
+        if (actualEndTime) updateData.actualEndTime = actualEndTime;
+        if (mileageNotes !== undefined) updateData.mileageNotes = mileageNotes;
+        
+        // ตรวจสอบความถูกต้องถ้ามีการอัพเดตทั้งคู่
+        if (mileageOut && mileageIn && parseInt(mileageIn) <= parseInt(mileageOut)) {
+            showSweetAlert('ไมล์เข้าต้องมากกว่าไมล์ออก', 'error');
+            return;
+        }
+    }
+
+    // บันทึกข้อมูล
+    database.ref('bookings/' + bookingId).update(updateData)
+        .then(() => {
+            bookingModal.classList.remove('active');
+            
+            let successMessage = '';
+            if (!hasMileageOut) {
+                successMessage = 'บันทึกไมล์ออกสำเร็จ';
+            } else if (hasMileageOut && !hasMileageIn) {
+                successMessage = 'บันทึกไมล์เข้าและสรุประยะทางสำเร็จ';
+            } else {
+                successMessage = 'อัพเดตข้อมูลไมล์สำเร็จ';
+            }
+            
+            showSweetAlert(successMessage, 'success');
+            resetMileageForm();
+            
+            // รีเฟรชข้อมูล
+            setTimeout(() => {
+                if (selectedDate) {
+                    showViewBookingsModal(selectedDate);
+                }
+                updateMyTodayBookings();
+            }, 500);
+        })
+        .catch((error) => {
+            showSweetAlert('เกิดข้อผิดพลาด: ' + error.message, 'error');
+        });
+}
+
+// รีเซ็ตฟอร์มบันทึกไมล์
+function resetMileageForm() {
+    // ลบส่วนแสดงข้อมูลการจองที่เพิ่มเข้ามา
+    const bookingInfoSection = document.querySelector('.booking-info-section');
+    if (bookingInfoSection) {
+        bookingInfoSection.remove();
+    }
+    
+    // ลบส่วนสรุปไมล์
+    const mileageSummary = document.querySelector('.mileage-out-summary, .full-mileage-summary');
+    if (mileageSummary) {
+        mileageSummary.remove();
+    }
+    
+    // รีเซ็ตฟิลด์ไมล์
+    document.getElementById('mileageSection').style.display = 'none';
+    document.getElementById('actualStartTime').value = '';
+    document.getElementById('actualEndTime').value = '';
+    document.getElementById('mileageOut').value = '';
+    document.getElementById('mileageIn').value = '';
+    document.getElementById('mileageNotes').value = '';
+    
+    // แสดงฟิลด์ทั้งหมดกลับมาและคืน required
+    showBookingFormFields();
+    
+    // แสดงฟิลด์ไมล์ทั้งหมดกลับมา
+    document.querySelectorAll('#mileageSection .form-group').forEach(el => {
+        el.style.display = 'block';
+    });
+    
+    // รีเซ็ตข้อความ
+    document.getElementById('bookingModalTitle').textContent = 'จองรถยนต์';
+    document.getElementById('saveBooking').textContent = 'บันทึกการจอง';
 }
     document.addEventListener('DOMContentLoaded', initApp);
 
